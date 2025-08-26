@@ -1,6 +1,6 @@
 # Author: Ofori George
 # Commencement Date: Thursday 21 August, 2025.
-# Telephone / WhatsApp: 0504694485
+# Telephone / WhatsApp: (+233)504694485
 # Facebook: Street Python
 # Email: georgeofori2005@gmail.com
 # website: not ready yet
@@ -13,6 +13,24 @@ a list of verses(verse array).
 
 from collections import UserString, UserList
 
+
+def create_verse_table_if_not_exists(conn):
+        """Create the verse table in the database if it is not present"""
+        
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS verses (
+            id INTEGER PRIMARY KEY,
+            text TEXT,
+            chapter_no INTEGER,
+            verse_no INTEGER,
+            book TEXT,
+            FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
+            );
+            """
+        )
+        conn.commit()
 
 # Create a verse class to represent a single a verse.
 class Verse(UserString):
@@ -34,9 +52,8 @@ class Verse(UserString):
         self._chapter = chapter_no
         self._book = book
         self._verse = verse_no
-        self.create_verse_table_if_not_exists()
+        #create_verse_table_if_not_exists(self.conn)
         self._id = self.get_id()
-        self.add_verse_if_not_added()
         super().__init__(self._text)
 
     def get_id(self):
@@ -50,55 +67,30 @@ class Verse(UserString):
         )
         row = self.cursor.fetchone()
         if row:
+            print(f"        {row}")
             return row[0]
-        id = self.add_verse_if_not_added()[0]
-        return id
-
-    def create_verse_table_if_not_exists(self):
-        """Create the verse table in the database if it is not present"""
-
+        self.add_verse_if_not_added()
         self.cursor.execute(
             """
-            CREATE TABLE IF NOT EXISTS verses (
-            id INTEGER PRIMARY KEY,
-            text TEXT,
-            chapter_no INTEGER,
-            verse_no INTEGER,
-            book TEXT,
-            FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
-            );
-            """
-        )
-        self.conn.commit()
-
-    def add_verse_if_not_added(self):
-        """Add a new verse to the database if it has not been added."""
-
-        self.cursor.execute(
-            """
-            SELECT id FROM verses WHERE text=? AND chapter_no=? AND verse_no=?;
+            SELECT id FROM verses WHERE text=? AND chapter_no=? AND  verse_no=? AND book=?;
             """,
-            (self._text, self._chapter, self._verse),
-        )
-        row = self.cursor.fetchone()
-        if row:
-            return row
-        self.cursor.execute(
-            """
-        INSERT INTO verses(text, chapter_no, verse_no,  book) VALUES (?, ?, ?, ?);
-        """,
             (self._text, self._chapter, self._verse, self._book),
         )
-        self.conn.commit()
+        row = self.cursor.fetchone()
+        return row[0]
+
+    
+    def add_verse_if_not_added(self):
+        """Add a new verse to the database if it has not been added."""
+        
         self.cursor.execute(
             """
-            SELECT id FROM verses WHERE text=? AND chapter_no=? AND verse_no=?;
+            INSERT INTO verses(text, chapter_no, verse_no,  book) VALUES (?, ?, ?, ?);
             """,
-            (self._text, self._chapter, self._verse),
+                (self._text, self._chapter, self._verse, self._book),
         )
-        row = self.cursor.fetchone()
-        return row
-
+        self.conn.commit()
+        
     def __repr__(self):
         """Return a representation of the verse that can be used to create a verse"""
 
@@ -148,9 +140,10 @@ class VerseArray(UserList):
         """Initialise the variables needed feo creating the class"""
 
         self.array = array
-        if isinstance(self.array, (list, tuple)):
-            super().__init__(self.array)
-        raise ValueError("Array must be a tuple or a list")
+        if not isinstance(self.array, (list, tuple)):
+            raise ValueError("Array must be a tuple or a list")
+        super().__init__(self.array)
+        
 
     def __iter__(self):
         """A dunder method when the array is being iterated over"""
