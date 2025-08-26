@@ -52,7 +52,6 @@ class Verse(UserString):
         self._chapter = chapter_no
         self._book = book
         self._verse = verse_no
-        #create_verse_table_if_not_exists(self.conn)
         self._id = self.get_id()
         super().__init__(self._text)
 
@@ -67,7 +66,6 @@ class Verse(UserString):
         )
         row = self.cursor.fetchone()
         if row:
-            print(f"        {row}")
             return row[0]
         self.add_verse_if_not_added()
         self.cursor.execute(
@@ -146,7 +144,7 @@ class VerseArray(UserList):
         
 
     def __iter__(self):
-        """A dunder method when the array is being iterated over"""
+        """A dunder method that gets called when the array is being iterated over"""
 
         for verse in self.array:
             yield verse
@@ -160,3 +158,14 @@ class VerseArray(UserList):
         """A string representing how an object of the class should be created"""
 
         return f"VerseArray(array={self.array})"
+        
+    def __getitem__(self, index):
+        """Get the item in an array based on its index.
+        index:the index(integer) of the item or slice.
+        return: A verse instance.
+        """
+        
+        if isinstance(index, slice):
+            verse_array = self.data[index]
+            return VerseArray(verse_array)
+        super().__getitem__(index)
