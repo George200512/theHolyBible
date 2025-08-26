@@ -11,7 +11,7 @@ import unittest
 import sqlite3
 import os
 
-from verse import Verse, VerseArray, create_verse_table_if_not_exists
+from verses.verse import Verse, VerseArray, create_verse_table_if_not_exists
 
 PATH = "../test.db"
 

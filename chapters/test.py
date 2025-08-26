@@ -18,9 +18,34 @@ parent_dir = script_dir.parents[0]
 # Add the parent directory to sys.path
 sys.path.append(str(parent_dir))
 
-import verse
+import verses
+from verses import test
 
 PATH = "../test.db"
 
 """A script for testing vital methods of the chapter"""
 
+
+# A TestChapter class
+class TestChapter(TestBase):
+    def setUp(self):
+        """create verse table in database """
+        
+        verses.verse.create_verse_table_if_not_exists(self.conn)
+        
+    def tearDown(self):
+        """Delete verse table from database """
+        
+        cursor = self.conn.cursor()
+        cursor.execute(
+        "DELETE FROM verses;"
+        )
+        
+    def test_get_all_verse_in_the_chapter(self):
+        """Test if the method responsible for getting all chapers of
+        a verse is working correctly"""
+        
+        pass
+        
+if __name__ == "__main__":
+    unittest.main()
