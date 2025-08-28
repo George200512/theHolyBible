@@ -9,6 +9,7 @@
 import pathlib
 import sys
 from collections import UserList
+import json
 
 # Get the absolute path of the script
 script_dir = pathlib.Path(__file__).parent
@@ -24,6 +25,18 @@ import exceptions as exc
 This script creates the chapter class and also chapter array class 
 for a group of chapters.
 """
+
+# Get content of the settings.json file
+def get_settings():
+    """Retrieve the content of the settings.json file and it it a dictionary"""
+    
+    with open(
+        "../settings.json", 
+        mode="r", 
+        enconding="utf-8"
+    ) as file:
+        data = json.load(f)
+        return data
 
 # Create a Chapter class for a single chapter
 class Chapter(UserList):
@@ -58,7 +71,9 @@ class Chapter(UserList):
     def __str__(self):
         """A string representation of of the chapter class """
         
-        return f"{self.book} {self.chapter}:1-{len(self.verse_array)}"
+        data = get_settings()
+        book = data["BOOKS"][self.book - 1]
+        return f"{book} {self.chapter}:1-{len(self.verse_array)}"
         
     def __repr__(self):
         """A representation of the class for instantiating"""

@@ -50,7 +50,7 @@ class TestChapter(test.TestBase):
         text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
         chapter_no=4,
         verse_no=6,
-        book="Malachi"
+        book=39
         )
         verse_2 = verses.verse.Verse(
             self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
@@ -58,19 +58,20 @@ class TestChapter(test.TestBase):
         verse_3 = verses.verse.Verse(
         self.conn,
         text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
-        book="John",
+        book=43,
         chapter_no=3,
         verse_no=16
         )
         chapter = Chapter(
             self.conn,
-            book="John",
+            book=43,
             chapter_no=3
         )
         self.assertIsInstance(chapter.verse_array, verses.verse.VerseArray)
         
     def test__get__item(self):
         verse_list = []
-        
+
+sys.path.remove(str(parent_dir))               
 if __name__ == "__main__":
     unittest.main()

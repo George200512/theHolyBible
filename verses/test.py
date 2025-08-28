@@ -11,7 +11,7 @@ import unittest
 import sqlite3
 import os
 
-from verses.verse import Verse, VerseArray, create_verse_table_if_not_exists
+from verse import Verse, VerseArray, create_verse_table_if_not_exists
 
 PATH = "../test.db"
 
@@ -58,7 +58,7 @@ class TestVerse(TestBase):
         """Test the validity of the get_id method of the verse class"""
         
         verse = Verse(
-            self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
+            self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
         )
         self.assertEqual(verse.id, 1)
 
@@ -68,7 +68,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -80,7 +80,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -92,7 +92,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -104,7 +104,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -116,11 +116,11 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
-        self.assertEqual(verse.book, "Exodus")
+        self.assertEqual(verse.book, 2)
 
     def test_verse(self):
         """Test if the verse property returns the right verse number"""
@@ -128,7 +128,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -140,7 +140,7 @@ class TestVerse(TestBase):
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
-            book="Exodus",
+            book=2,
             verse_no=14,
             chapter_no=14,
         )
@@ -172,7 +172,7 @@ class TestVerseArray(TestBase):
         text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
         chapter_no=4,
         verse_no=6,
-        book="Malachi"
+        book=39
         )
         array = VerseArray([verse])
         self.assertEqual(str(array), "[<VerseArray:1>]")
@@ -185,10 +185,10 @@ class TestVerseArray(TestBase):
         text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
         chapter_no=4,
         verse_no=6,
-        book="Malachi"
+        book=39
         )
         verse_2 = Verse(
-            self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
+            self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
         )  
         array = VerseArray([verse_1, verse_2])
         for verse in array:
@@ -202,15 +202,15 @@ class TestVerseArray(TestBase):
         text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
         chapter_no=4,
         verse_no=6,
-        book="Malachi"
+        book=39
         )
         verse_2 = Verse(
-            self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
+            self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
         )  
         verse_3 = Verse(
         self.conn,
         text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
-        book="John",
+        book=43,
         chapter_no=3,
         verse_no=16
         )
