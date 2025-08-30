@@ -107,5 +107,4 @@ class Chapter(UserList):
                 if (start-1 > 0 or start > len(self.verse_array)) and (end-1 > 0 or end > len(self.verse_array)):
                     return self.verse_array[index]
                 raise exc.ChapterNotFoundError("Index should be greater than zero and less than or equal to the length of the chapters")
-            
-sys.path.remove(str(parent_dir))
+           

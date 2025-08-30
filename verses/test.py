@@ -10,6 +10,12 @@
 import unittest
 import sqlite3
 import os
+import pathlib 
+import sys
+
+# Get the absolute path of the script
+script_dir = pathlib.Path(__file__).parent
+sys.path.append(str(script_dir))
 
 from verse import Verse, VerseArray, create_verse_table_if_not_exists
 

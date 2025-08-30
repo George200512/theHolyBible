@@ -18,7 +18,7 @@ parent_dir = script_dir.parents[0]
 # Add the parent directory to sys.path
 sys.path.append(str(parent_dir))
 
-import verses
+from verses import verse
 from verses import test
 from chapters.chapter import Chapter 
 
@@ -31,7 +31,7 @@ class TestChapter(test.TestBase):
     def setUp(self):
         """create verse table in database """
         
-        verses.verse.create_verse_table_if_not_exists(self.conn)
+        verse.create_verse_table_if_not_exists(self.conn)
         
     def tearDown(self):
         """Delete verse table from database """
@@ -45,17 +45,17 @@ class TestChapter(test.TestBase):
         """Test if the method responsible for getting all chapers of
         a verse is working correctly"""
         
-        verse_1 = verses.verse.Verse(
+        verse_1 = verse.Verse(
         self.conn, 
         text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
         chapter_no=4,
         verse_no=6,
         book=39
         )
-        verse_2 = verses.verse.Verse(
+        verse_2 = verse.Verse(
             self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
         )  
-        verse_3 = verses.verse.Verse(
+        verse_3 = verse.Verse(
         self.conn,
         text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
         book=43,
@@ -67,11 +67,12 @@ class TestChapter(test.TestBase):
             book=43,
             chapter_no=3
         )
-        self.assertIsInstance(chapter.verse_array, verses.verse.VerseArray)
+        self.assertIsInstance(chapter.verse_array, verse.VerseArray)
         
     def test__get__item(self):
-        verse_list = []
-
-sys.path.remove(str(parent_dir))               
+        verse_list = [
+            (self.conn, "The elder unto the well beloved Gaius, whom I love in the truth.", 1, )
+        ]
+                     
 if __name__ == "__main__":
     unittest.main()

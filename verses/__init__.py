@@ -1,1 +1,0 @@
-from .verse import Verse,  VerseArray, create_verse_table_if_not_exists
