@@ -92,11 +92,7 @@ class Verse(UserString):
     def __repr__(self):
         """Return a representation of the verse that can be used to create a verse"""
 
-<<<<<<< HEAD
         return f"Verse(connection={self.conn}, text={self._text}, chapter_no={self.chapter},  book={self.book}, verse_no={self.verse})"
-=======
-        return f"Verse(connection={self.conn}, text={self.text}, chapter_no={self.chapter},  book={self.book}, verse_no={self.verse})"
->>>>>>> b532d9a4e31df44bcb4c1edb8e9db9ff9ebfd4e3
 
     def __str__(self):
         """A string representation of a verse"""
