@@ -71,6 +71,7 @@ class TestChapter(test.TestBase):
         
     def test__get__item(self):
         verse_list = [
+<<<<<<< HEAD
             (self.conn, "The vision of Obadiah.This is what the sovereign Lord says about Edom--", 1, 31, 1 ),
             (
                 self.conn, 
@@ -100,6 +101,10 @@ class TestChapter(test.TestBase):
         chapter = Chapter(self.conn, 31, 1)
         print(str(chapter[1]))
         #self.assertEqual(str(chapter[1]), 'Verse 1')
+=======
+            (self.conn, "The elder unto the well beloved Gaius, whom I love in the truth.", 1, )
+        ]
+>>>>>>> b532d9a4e31df44bcb4c1edb8e9db9ff9ebfd4e3
                      
 if __name__ == "__main__":
     unittest.main()

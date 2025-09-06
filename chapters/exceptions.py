@@ -14,5 +14,9 @@ class ChapterNotFoundError(IndexError):
     or equal to zero, or greater than the length of the chaper"""
     
     def __init__(self, message):
+<<<<<<< HEAD
         super().__init__(message)
+=======
+        super().__init__(messaage)
+>>>>>>> b532d9a4e31df44bcb4c1edb8e9db9ff9ebfd4e3
         self.message = message

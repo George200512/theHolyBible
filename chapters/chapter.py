@@ -33,9 +33,15 @@ def get_settings():
     with open(
         "../settings.json", 
         mode="r", 
+<<<<<<< HEAD
         encoding="utf-8"
     ) as file:
         data = json.load(file)
+=======
+        enconding="utf-8"
+    ) as file:
+        data = json.load(f)
+>>>>>>> b532d9a4e31df44bcb4c1edb8e9db9ff9ebfd4e3
         return data
 
 # Create a Chapter class for a single chapter
@@ -91,4 +97,24 @@ class Chapter(UserList):
             NB:This index should be used like the normal indexing style
             it should start from 1 not zero.Index or slice less than zero is an error"""
             
+<<<<<<< HEAD
             pass
+=======
+            if isinstance(index, int):
+                if (index-1 > 0) or (index > len(self.verse_array)):
+                    return self.verse_array[index-1]
+                raise exc.ChapterNotFoundError("Index should be greater than zero and less than or equal to the length of the chapters")
+            elif isinstance(index, slice):
+                start = index.start
+                end = index.end
+                step = index.step
+                if not step :
+                    step = 1
+                else:
+                    if step <= 0 or step >= len(self.verse_array):
+                        raise ValueError("Step cannot be zero or less and not greater than or equal to length of chapter")
+                if (start-1 > 0 or start > len(self.verse_array)) and (end-1 > 0 or end > len(self.verse_array)):
+                    return self.verse_array[index]
+                raise exc.ChapterNotFoundError("Index should be greater than zero and less than or equal to the length of the chapters")
+           
+>>>>>>> b532d9a4e31df44bcb4c1edb8e9db9ff9ebfd4e3
