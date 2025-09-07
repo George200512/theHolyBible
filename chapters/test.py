@@ -98,7 +98,7 @@ class TestChapter(test.TestBase):
             data[0], data[1], data[2], data[3], data[4]
         ), verse_list))
         chapter = Chapter(self.conn, 31, 1)
-        print(str(chapter[1]))
+        print(chapter[1])
                      
 if __name__ == "__main__":
     unittest.main()

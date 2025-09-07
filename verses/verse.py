@@ -26,11 +26,53 @@ def create_verse_table_if_not_exists(conn):
             chapter_no INTEGER,
             verse_no INTEGER,
             book INTEGER,
+            favorite INTEGER DEFAULT 0,
             FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
             );
             """
         )
         conn.commit()
+        
+        
+class Favorite:
+    """A class descriptor representing the favorite attribute in the
+    verse class"""
+    
+    def __init__(self):
+        """Initialize the class. """
+        
+        pass
+        
+    def __get__(self, instance, owner):
+        """Return a boolean indicating a verse has been marked as favorite"""
+        
+        
+        instance.cursor.execute(
+        """
+        SELECT favorite FROM verses WHERE id=?
+        """, instance.id
+        )
+        verse = instance.cursor.fetchone()
+        if verse[0] == 1:
+            return True
+        return False
+            
+    def __set__(self, instance, value):
+        """Mark verse a favorite by setting value to true and unmark by setting it to false"""
+        
+        if value:
+           instance.cursor.execute(
+           """
+           UPDATE verses SET favorite=1 WHERE id=?
+           """, instance.id
+           )
+        else:
+           instance.cursor.execute(
+           """
+           UPDATE verses SET favorite=0 WHERE id=?
+           """, self.id
+           )
+               
 
 # Create a verse class to represent a single a verse.
 class Verse(UserString):
@@ -53,6 +95,7 @@ class Verse(UserString):
         self._book = book
         self._verse = verse_no
         self._id = self.get_id()
+        self.favorite = Favorite()
         super().__init__(self._text)
 
     def get_id(self):
@@ -128,6 +171,17 @@ class Verse(UserString):
         """return the id of a verse"""
 
         return self._id
+        
+    def mark_as_favorite(self):
+        """Mark a verse as favorite"""
+        
+        self.favorite = True
+        
+    def unmark_favorite(self):
+        """Unmark a favorite verse"""
+        
+        if self.favorite:
+            self.favorite = False
 
 
 # Create a VerseArray class to represent a collection of related or not related verses

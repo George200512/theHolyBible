@@ -91,5 +91,12 @@ class Chapter(UserList):
             NB:This index should be used like the normal indexing style
             it should start from 1 not zero.Index or slice less than zero is an error"""
             
-            pass
+            if isinstance(index, int):
+                if index < 1 or index > len(self.verse_array):
+                    raise exec.ChapterNotFound('Chapter number not found')
+                return self.verse_array[index-1]
+            elif isinstance(index, slice):
+                pass
+            else:
+                super().__getitem__(index)
             

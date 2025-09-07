@@ -151,6 +151,32 @@ class TestVerse(TestBase):
             chapter_no=14,
         )
         self.assertEqual(verse.id, 1)
+        
+    def test_mark_as_favorite(self):
+        """Test the method marks a verse as favorite"""
+        
+        verse = Verse(
+            self.conn,
+            text="The lord shall fight my fight",
+            book=2,
+            verse_no=14,
+            chapter_no=14,
+        )
+        verse.mark_as_favorite()
+        self.assertEqual(verse.favorite, True)
+        
+    def test_unmark_favorite(self):
+        """Test if a verse is unmarked as favorite"""
+        
+        verse = Verse(
+            self.conn,
+            text="The lord shall fight my fight",
+            book=2,
+            verse_no=14,
+            chapter_no=14,
+        )
+        verse.unmark_favorite()
+        self.assertEqual(verse.favorite, False)
 
 
 # A VerseArray testCase class
