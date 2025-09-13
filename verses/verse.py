@@ -222,4 +222,4 @@ class VerseArray(UserList):
         if isinstance(index, slice):
             verse_array = self.data[index]
             return VerseArray(verse_array)
-        super().__getitem__(index)
+        return self.data[index]

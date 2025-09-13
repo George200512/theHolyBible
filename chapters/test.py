@@ -70,6 +70,8 @@ class TestChapter(test.TestBase):
         self.assertIsInstance(chapter.verse_array, verse.VerseArray)
         
     def test__get__item(self):
+        """Check if the right objects are return if it is indexed the right way."""
+        
         verse_list = [
             (self.conn, "The vision of Obadiah.This is what the sovereign Lord says about Edom--", 1, 31, 1 ),
             (
@@ -98,7 +100,8 @@ class TestChapter(test.TestBase):
             data[0], data[1], data[2], data[3], data[4]
         ), verse_list))
         chapter = Chapter(self.conn, 31, 1)
-        print(chapter[1])
+        self.assertEqual(str(chapter[1]), "Verse 1")
+        self.assertEqual(str(chapter[:2]), "[<VerseArray:2>]")
                      
 if __name__ == "__main__":
     unittest.main()

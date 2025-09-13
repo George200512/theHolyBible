@@ -19,7 +19,6 @@ parent_dir = script_dir.parents[0]
 sys.path.append(str(parent_dir))
 
 import verses
-import exceptions as exc
 
 """
 This script creates the chapter class and also chapter array class 
@@ -92,11 +91,39 @@ class Chapter(UserList):
             it should start from 1 not zero.Index or slice less than zero is an error"""
             
             if isinstance(index, int):
-                if index < 1 or index > len(self.verse_array):
-                    raise exec.ChapterNotFound('Chapter number not found')
+                if (index < 1 ) or index > (len(self.verse_array)):
+                    raise verse.exceptions.VerseNotFound('Verse number not found')
                 return self.verse_array[index-1]
             elif isinstance(index, slice):
-                pass
+                start = index.start
+                stop = index.stop
+                step = index.step
+                if start is not None:
+                    if (start < 1 ) or start > (len(self.verse_array)):
+                        raise verse.exceptions.VerseNotFound('Verse number not found')
+                else:
+                    start = 1
+                    
+                if stop is not None:
+                    if (stop < 1 ) or stop > (len(self.verse_array)):
+                        raise verse.exceptions.VerseNotFound('Verse number not found')
+                    
+                if step is not None:
+                    if (step< 1 ) or step > (len(self.verse_array)):
+                        raise verse.exceptions.VerseNotFound('Verse number not found')
+                else:
+                 return self.verse_array[start - 1:stop:step]
             else:
-                super().__getitem__(index)
+                return self.data[index]
+                
+    def head(self, quantity=5):
+            """Get the first five verses of a chapter is it is more than five or all verses
+            quantity:the number of verses to return.Default is 5.
+            Returns:VerseArray
+            """
             
+            if quantity > len(self.data):
+                return self.data[:]
+            if len(self.data) <= quantity:
+                return self.data[:]
+            return self.data[: quantity]
