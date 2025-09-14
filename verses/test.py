@@ -10,7 +10,7 @@
 import unittest
 import sqlite3
 import os
-import pathlib 
+import pathlib
 import sys
 
 # Get the absolute path of the script
@@ -24,45 +24,46 @@ PATH = "../test.db"
 
 class TestBase(unittest.TestCase):
     """A base class setup database and tear it down"""
-    
+
     @classmethod
     def setUpClass(cls):
         """Connect to database"""
-        
+
         cls.conn = sqlite3.connect(PATH)
-        
+
     @classmethod
     def tearDownClass(cls):
         """Close database and delete file"""
 
         cls.conn.close()
         os.remove(PATH)
-        
+
     def setUp(self):
         pass
-        
+
     def tearDown(self):
         pass
-        
+
+
 class TestVerse(TestBase):
-    """Test the methods of the verse object"""  
-    
+    """Test the methods of the verse object"""
+
     def setUp(self):
-         """Create database before Test begins """
-         
-         create_verse_table_if_not_exists(self.conn)
-    
+        """Create database before Test begins"""
+
+        create_verse_table_if_not_exists(self.conn)
+
     def tearDown(self):
         """Clean the verses table each Test to ensure fresh IDs"""
-        
+
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM verses;")
-        #cursor.execute("DELETE FROM sqlite_sequence WHERE name='verses';")
+        # cursor.execute("DELETE FROM sqlite_sequence WHERE name='verses';")
         self.conn.commit()
-        
+
     def test_get_id(self):
         """Test the validity of the get_id method of the verse class"""
-        
+
         verse = Verse(
             self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
         )
@@ -151,10 +152,10 @@ class TestVerse(TestBase):
             chapter_no=14,
         )
         self.assertEqual(verse.id, 1)
-        
+
     def test_mark_as_favorite(self):
         """Test the method marks a verse as favorite"""
-        
+
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
@@ -164,10 +165,10 @@ class TestVerse(TestBase):
         )
         verse.mark_as_favorite()
         self.assertEqual(verse.favorite, True)
-        
+
     def test_unmark_favorite(self):
         """Test if a verse is unmarked as favorite"""
-        
+
         verse = Verse(
             self.conn,
             text="The lord shall fight my fight",
@@ -182,73 +183,74 @@ class TestVerse(TestBase):
 # A VerseArray testCase class
 class TestVerseArray(TestBase):
     """A unittest testcase class for the verse array class"""
-    
+
     def setUp(self):
         """Create a table in database before every test"""
-        
+
         create_verse_table_if_not_exists(self.conn)
-        
+
     def tearDown(self):
         """Delete verse table from database"""
-        
+
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM verses;")
-        #cursor.execute("DELETE FROM sqlite_sequence WHERE name='verses';")
+        # cursor.execute("DELETE FROM sqlite_sequence WHERE name='verses';")
         self.conn.commit()
-            
+
     def test__init__(self):
         """Check if the VerseArray is being initialised correctly"""
-        
+
         verse = Verse(
-        self.conn, 
-        text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
-        chapter_no=4,
-        verse_no=6,
-        book=39
+            self.conn,
+            text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
+            chapter_no=4,
+            verse_no=6,
+            book=39,
         )
         array = VerseArray([verse])
         self.assertEqual(str(array), "[<VerseArray:1>]")
-        
+
     def test__iter__(self):
         """Test if iteration of the verse array works well"""
-        
+
         verse_1 = Verse(
-        self.conn, 
-        text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
-        chapter_no=4,
-        verse_no=6,
-        book=39
+            self.conn,
+            text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
+            chapter_no=4,
+            verse_no=6,
+            book=39,
         )
         verse_2 = Verse(
             self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
-        )  
+        )
         array = VerseArray([verse_1, verse_2])
         for verse in array:
             self.assertIsInstance(verse, Verse)
-            
+
     def test__getitem__(self):
         """Test if it gives the right item when indexed especially when slice is used."""
-        
+
         verse_1 = Verse(
-        self.conn, 
-        text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
-        chapter_no=4,
-        verse_no=6,
-        book=39
+            self.conn,
+            text="And he will turn the hearts of fathers to their children and the hearts of children to their fathers, lest I come and strike the land with a decree of utter destruction.\”",
+            chapter_no=4,
+            verse_no=6,
+            book=39,
         )
         verse_2 = Verse(
             self.conn, text="And Jesus wept.", book=43, verse_no=31, chapter_no=10
-        )  
+        )
         verse_3 = Verse(
-        self.conn,
-        text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
-        book=43,
-        chapter_no=3,
-        verse_no=16
+            self.conn,
+            text="For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+            book=43,
+            chapter_no=3,
+            verse_no=16,
         )
         array = VerseArray([verse_1, verse_2, verse_3])
         sub_array = array[:]
         self.assertIsInstance(sub_array, VerseArray)
-    
+
+
 if __name__ == "__main__":
     unittest.main()

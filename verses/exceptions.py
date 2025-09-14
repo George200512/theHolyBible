@@ -15,10 +15,11 @@ import pathlib
 script_dir = pathlib.Path(__file__).parent
 sys.path.append(str(script_dir))
 
+
 class VerseNotFoundError(IndexError):
     """An exception class that is raised when slice or index is less than
     or equal to zero, or greater than the length of the verse"""
-    
+
     def __init__(self, message):
         super().__init__(message)
         self.message = message

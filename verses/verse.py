@@ -15,11 +15,11 @@ from collections import UserString, UserList
 
 
 def create_verse_table_if_not_exists(conn):
-        """Create the verse table in the database if it is not present"""
-        
-        cursor = conn.cursor()
-        cursor.execute(
-            """
+    """Create the verse table in the database if it is not present"""
+
+    cursor = conn.cursor()
+    cursor.execute(
+        """
             CREATE TABLE IF NOT EXISTS verses (
             id INTEGER PRIMARY KEY,
             text TEXT,
@@ -30,49 +30,51 @@ def create_verse_table_if_not_exists(conn):
             FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
             );
             """
-        )
-        conn.commit()
-        
-        
+    )
+    conn.commit()
+
+
 class Favorite:
     """A class descriptor representing the favorite attribute in the
     verse class"""
-    
+
     def __init__(self):
-        """Initialize the class. """
-        
+        """Initialize the class."""
+
         pass
-        
+
     def __get__(self, instance, owner):
         """Return a boolean indicating a verse has been marked as favorite"""
-        
-        
+
         instance.cursor.execute(
-        """
+            """
         SELECT favorite FROM verses WHERE id=?
-        """, instance.id
+        """,
+            instance.id,
         )
         verse = instance.cursor.fetchone()
         if verse[0] == 1:
             return True
         return False
-            
+
     def __set__(self, instance, value):
         """Mark verse a favorite by setting value to true and unmark by setting it to false"""
-        
+
         if value:
-           instance.cursor.execute(
-           """
+            instance.cursor.execute(
+                """
            UPDATE verses SET favorite=1 WHERE id=?
-           """, instance.id
-           )
+           """,
+                instance.id,
+            )
         else:
-           instance.cursor.execute(
-           """
+            instance.cursor.execute(
+                """
            UPDATE verses SET favorite=0 WHERE id=?
-           """, self.id
-           )
-               
+           """,
+                self.id,
+            )
+
 
 # Create a verse class to represent a single a verse.
 class Verse(UserString):
@@ -120,18 +122,17 @@ class Verse(UserString):
         row = self.cursor.fetchone()
         return row[0]
 
-    
     def add_verse_if_not_added(self):
         """Add a new verse to the database if it has not been added."""
-        
+
         self.cursor.execute(
             """
             INSERT INTO verses(text, chapter_no, verse_no,  book) VALUES (?, ?, ?, ?);
             """,
-                (self._text, self._chapter, self._verse, self._book),
+            (self._text, self._chapter, self._verse, self._book),
         )
         self.conn.commit()
-        
+
     def __repr__(self):
         """Return a representation of the verse that can be used to create a verse"""
 
@@ -171,15 +172,15 @@ class Verse(UserString):
         """return the id of a verse"""
 
         return self._id
-        
+
     def mark_as_favorite(self):
         """Mark a verse as favorite"""
-        
+
         self.favorite = True
-        
+
     def unmark_favorite(self):
         """Unmark a favorite verse"""
-        
+
         if self.favorite:
             self.favorite = False
 
@@ -195,7 +196,6 @@ class VerseArray(UserList):
         if not isinstance(self.array, (list, tuple)):
             raise ValueError("Array must be a tuple or a list")
         super().__init__(self.array)
-        
 
     def __iter__(self):
         """A dunder method that gets called when the array is being iterated over"""
@@ -212,13 +212,13 @@ class VerseArray(UserList):
         """A string representing how an object of the class should be created"""
 
         return f"VerseArray(array={self.array})"
-        
+
     def __getitem__(self, index):
         """Get the item in an array based on its index.
         index:the index(integer) of the item or slice.
         return: A verse instance.
         """
-        
+
         if isinstance(index, slice):
             verse_array = self.data[index]
             return VerseArray(verse_array)
