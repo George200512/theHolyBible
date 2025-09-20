@@ -1,71 +1,335 @@
 {
     "DATABASES":[],
     "BOOKS":[
-        "Genesis",
-        "Exodus",
-        "Leviticus",
-        "Numbers",
-        "Deuteronomy",
-        "Joshua",
-        "Judges",
-        "Ruth", 
-        "1 Samuel",
-        "2 Samuel",
-        "1 Kings",
-        "2 Kings",
-        "1 Chronicles",
-        "2 Chronicles",
-        "Ezra",
-        "Nehemiah",
-        "Esther",
-        "Job",
-        "Psalms",
-        "Proverbs",
-        "Ecclesiastes",
-        "Song of Solomon",
-        "Isaiah",
-        "Jeremiah",
-        "Lamentations",
-        "Ezekiel",
-        "Daniel",
-        "Hosea",
-        "Joel",
-        "Amos",
-        "Obadiah",
-        "Jonah",
-        "Micah",
-        "Nahum",
-        "Habakkuk",
-        "Zephaniah",
-        "Haggai",
-        "Zechariah",
-        "Malachi",
-        "Matthew",
-        "Mark",
-        "Luke",
-        "John",
-        "Acts",
-        "Romans",
-        "1 Corinthians",
-        "2 Corinthians",
-        "Galatians",
-        "Ephesians",
-        "Philippians",
-        "Colossians",
-        "1 Thessalonians",
-        "2 Thessalonians",
-        "1 Timothy",
-        "2 Timothy",
-        "Titus",
-        "Philemon",
-        "Hebrews",
-        "James",
-        "1 Peter",
-        "2 Peter",
-        "1 John",
-        "2 John",
-        "3 John",
-        "Jude",
-        "Revelation"
+          {
+    "name": "Genesis",
+    "chapters": 50,
+    "description": "Tells of creation, the fall of humanity, the early history of mankind, the patriarchs Abraham, Isaac, Jacob, and Joseph; God’s covenant promises to them upheld even in hardship. 0"
+  },
+  {
+    "name": "Exodus",
+    "chapters": 40,
+    "description": "Describes Israel’s slavery in Egypt, Moses’ leadership, the plagues, the Exodus from Egypt, covenant at Sinai, and instructions for worship. 1"
+  },
+  {
+    "name": "Leviticus",
+    "chapters": 27,
+    "description": "Focuses on laws and rituals, holiness codes, priestly duties, and how Israel is to live set apart; emphasizes worship and ethical living. 2"
+  },
+  {
+    "name": "Numbers",
+    "chapters": 36,
+    "description": "Narrates Israel’s wandering in the wilderness, census data, rebellions, provisions, and God’s guidance amid disobedience. 3"
+  },
+  {
+    "name": "Deuteronomy",
+    "chapters": 34,
+    "description": "Collection of Moses’ speeches reviewing law, covenant obligations, and Israel’s history as they prepare to enter the Promised Land. 4"
+  },
+  {
+    "name": "Joshua",
+    "chapters": 24,
+    "description": "Israel, under Joshua, conquers Canaan, divides the land among the tribes, and renews their covenant with God. 5"
+  },
+  {
+    "name": "Judges",
+    "chapters": 21,
+    "description": "Cycle of Israel sinning, being oppressed, crying out, and being rescued by judges; shows the consequences of turning from covenant faithfulness. 6"
+  },
+  {
+    "name": "Ruth",
+    "chapters": 4,
+    "description": "A story of loyalty, redemption, and God’s providence, focusing on Ruth, a Moabite woman, and her integration into Israel’s story. 7"
+  },
+  {
+    "name": "1 Samuel",
+    "chapters": 31,
+    "description": "Transition of Israel from the period of judges to monarchy; story of Samuel, Saul, and the rise of David. 8"
+  },
+  {
+    "name": "2 Samuel",
+    "chapters": 24,
+    "description": "Reign of David: his sins, successes, consolidation of the kingdom, and God’s promises to David’s house. 9"
+  },
+  {
+    "name": "1 Kings",
+    "chapters": 22,
+    "description": "Begins with Solomon’s reign, wisdom, and temple building; then divides kingdom histories of Israel and Judah, decline, idolatry, and prophets. 10"
+  },
+  {
+    "name": "2 Kings",
+    "chapters": 25,
+    "description": "Further history of Israel and Judah’s kings, fall of Israel to Assyria, Judah to Babylon; prophetic ministries and judgment. 11"
+  },
+  {
+    "name": "1 Chronicles",
+    "chapters": 29,
+    "description": "Retrospective history emphasizing David and the temple; genealogies; religious reforms in Judah. 12"
+  },
+  {
+    "name": "2 Chronicles",
+    "chapters": 36,
+    "description": "Continuation of Israel/Judah’s history focusing more on Judah, temple worship, reforms, exile, and hope. 13"
+  },
+  {
+    "name": "Ezra",
+    "chapters": 10,
+    "description": "Return from exile under Cyrus, rebuilding of the temple, reforms among the returned exiles, leadership of Ezra. 14"
+  },
+  {
+    "name": "Nehemiah",
+    "chapters": 13,
+    "description": "Nehemiah leads rebuilding of Jerusalem’s walls, community reforms, renewed covenant, and restoration. 15"
+  },
+  {
+    "name": "Esther",
+    "chapters": 10,
+    "description": "Story of Esther’s courage in Persia, saving the Jewish people from genocide, God’s providence in unexpected ways. 16"
+  },
+  {
+    "name": "Job",
+    "chapters": 42,
+    "description": "Explores suffering, divine justice, integrity; dialogues between Job and his friends; God’s response from the whirlwind. 17"
+  },
+  {
+    "name": "Psalms",
+    "chapters": 150,
+    "description": "Collection of poems, hymns, praises, laments; used in Israel’s worship life; wide range of emotions and human experience. 18"
+  },
+  {
+    "name": "Proverbs",
+    "chapters": 31,
+    "description": "Wisdom sayings, advice for life, character, discipline, and fear of the Lord as foundational. 19"
+  },
+  {
+    "name": "Ecclesiastes",
+    "chapters": 12,
+    "description": "Reflections on meaning, vanity, the fleeting nature of life and human accomplishments; calls to fear God and enjoy life. 20"
+  },
+  {
+    "name": "Song of Solomon",
+    "chapters": 8,
+    "description": "Poetic love dialogue between lovers; often seen as celebrating human love, marriage, and sometimes allegorical spiritual love. 21"
+  },
+  {
+    "name": "Isaiah",
+    "chapters": 66,
+    "description": "Prophecies of judgment and hope; visions of God’s holiness; future promises including the suffering servant, restoration, and messianic themes. 22"
+  },
+  {
+    "name": "Jeremiah",
+    "chapters": 52,
+    "description": "Prophet Jeremiah’s warnings of impending judgment for Judah, calls to repentance, suffering of the prophet, and future restoration. 23"
+  },
+  {
+    "name": "Lamentations",
+    "chapters": 5,
+    "description": "Poetic laments over Jerusalem’s destruction; grief, mourning, confession, and hope. 24"
+  },
+  {
+    "name": "Ezekiel",
+    "chapters": 48,
+    "description": "Prophecies during exile; visions, symbolic acts; judgment and hope; restoration and new temple vision. 25"
+  },
+  {
+    "name": "Daniel",
+    "chapters": 12,
+    "description": "Stories and visions; God’s sovereignty over kingdoms; trials of faith; apocalyptic visions about the end times and God’s kingdom. 26"
+  },
+  {
+    "name": "Hosea",
+    "chapters": 14,
+    "description": "Marriage metaphor for Israel’s unfaithfulness; God’s steadfast love and restoration despite betrayal. 27"
+  },
+  {
+    "name": "Joel",
+    "chapters": 3,
+    "description": "Prophetic announcements of judgment; call to repentance; promise of outpouring of God’s spirit and restoration. 28"
+  },
+  {
+    "name": "Amos",
+    "chapters": 9,
+    "description": "Prophet Amos warns Israel of social injustice, hypocrisy; emphasizes justice, righteousness, and warnings before restoration. 29"
+  },
+  {
+    "name": "Obadiah",
+    "chapters": 1,
+    "description": "Shortest Old Testament book; prophecy against Edom for pride and betrayal, promise of restoration to Israel. 30"
+  },
+  {
+    "name": "Jonah",
+    "chapters": 4,
+    "description": "Story of a reluctant prophet, God’s mercy to Nineveh; themes of obedience, compassion, and forgiveness. 31"
+  },
+  {
+    "name": "Micah",
+    "chapters": 7,
+    "description": "Prophecies including messages about judgment for social injustice and hope for a ruler from Bethlehem; God’s requirements for justice, mercy, humility. 32"
+  },
+  {
+    "name": "Nahum",
+    "chapters": 3,
+    "description": "Prophecy against Nineveh; God’s justice and wrath against cruelty. 33"
+  },
+  {
+    "name": "Habakkuk",
+    "chapters": 3,
+    "description": "Dialogues between prophet and God about injustice; vision, lament, and ultimately trust in God despite unanswered questions. 34"
+  },
+  {
+    "name": "Zephaniah",
+    "chapters": 3,
+    "description": "Warning of coming Day of the LORD, calls to repentance; promise of restoration for remnant. 35"
+  },
+  {
+    "name": "Haggai",
+    "chapters": 2,
+    "description": "Encouragement to rebuild the temple after exile; God’s promise to dwell among His people. 36"
+  },
+  {
+    "name": "Zechariah",
+    "chapters": 14,
+    "description": "Visions, prophetic oracles, encouragement to return; future hopes including messianic rule. 37"
+  },
+  {
+    "name": "Malachi",
+    "chapters": 4,
+    "description": "Final prophetic word of the Old Testament; addresses Israel’s faithlessness, call to righteous living, promise of messenger. 38"
+  },
+  {
+    "name": "Matthew",
+    "chapters": 28,
+    "description": "One of the Gospels; presents Jesus as Messiah, King of the Jews; includes genealogy, teachings, parables, death and resurrection. 39"
+  },
+  {
+    "name": "Mark",
+    "chapters": 16,
+    "description": "A fast-paced Gospel emphasizing Jesus’ actions, authority, suffering, and that He came to serve; includes many miracles. 40"
+  },
+  {
+    "name": "Luke",
+    "chapters": 24,
+    "description": "Gospel giving detailed narrative of Jesus’ life, ministry, compassion, parables; careful ordering and historical detail; bridge between Old Testament and early church. 41"
+  },
+  {
+    "name": "John",
+    "chapters": 21,
+    "description": "Gospel focusing on Jesus’ identity, signs, ‘I am’ statements; emphasizes belief, eternal life, love. 42"
+  },
+  {
+    "name": "Acts",
+    "chapters": 28,
+    "description": "History of the early Christian church after Jesus’ ascension; spread of the Gospel through apostles; key figures include Peter and Paul. 43"
+  },
+  {
+    "name": "Romans",
+    "chapters": 16,
+    "description": "Paul’s letter to the church in Rome explaining the gospel, justification by faith, relation of Israel and Gentiles. 44"
+  },
+  {
+    "name": "1 Corinthians",
+    "chapters": 16,
+    "description": "Paul addresses problems in Corinth: division, immorality, spiritual gifts, resurrection; guidance for church life. 45"
+  },
+  {
+    "name": "2 Corinthians",
+    "chapters": 13,
+    "description": "Paul defends his apostleship, encourages reconciliation, highlights suffering and God’s comfort. 46"
+  },
+  {
+    "name": "Galatians",
+    "chapters": 6,
+    "description": "Paul refutes legalism, teaches justification by faith in Christ apart from works of the law; Christian freedom. 47"
+  },
+  {
+    "name": "Ephesians",
+    "chapters": 6,
+    "description": "Paul’s letter about the church as the body of Christ; unity, spiritual blessings, Christian conduct. 48"
+  },
+  {
+    "name": "Philippians",
+    "chapters": 4,
+    "description": "Letter of encouragement and joy; Christ’s humility and exaltation; contentment in all circumstances. 49"
+  },
+  {
+    "name": "Colossians",
+    "chapters": 4,
+    "description": "Paul emphasizes Christ’s supremacy and sufficiency; encourages believers to live in Christ and avoid false teachings. 50"
+  },
+  {
+    "name": "1 Thessalonians",
+    "chapters": 5,
+    "description": "Paul encourages believers, teaches about Christ’s return, holiness, and how to live in light of that coming. 51"
+  },
+  {
+    "name": "2 Thessalonians",
+    "chapters": 3,
+    "description": "Addresses misunderstandings about Christ’s return; encourages perseverance; clarifies timing. 52"
+  },
+  {
+    "name": "1 Timothy",
+    "chapters": 6,
+    "description": "Paul gives guidance to Timothy on church leadership, dealing with false teaching, and godly conduct. 53"
+  },
+  {
+    "name": "2 Timothy",
+    "chapters": 4,
+    "description": "Paul’s final letter; exhortation to remain faithful, endure suffering, storing up treasure in heaven. 54"
+  },
+  {
+    "name": "Titus",
+    "chapters": 3,
+    "description": "Instructions for organizing churches, teaching sound doctrine, good works. 55"
+  },
+  {
+    "name": "Philemon",
+    "chapters": 1,
+    "description": "Personal appeal from Paul to Philemon to receive back his runaway slave Onesimus as a brother in Christ. 56"
+  },
+  {
+    "name": "Hebrews",
+    "chapters": 13,
+    "description": "Anonymous letter encouraging Jewish Christians; shows the superiority of Christ, fulfillment of the old covenant; perseverance in faith. 57"
+  },
+  {
+    "name": "James",
+    "chapters": 5,
+    "description": "Faith and works, practical Christian living; emphasis on righteous behavior, patience, and controlling the tongue. 58"
+  },
+  {
+    "name": "1 Peter",
+    "chapters": 5,
+    "description": "Encouragement in suffering, hope in Christ, call to holiness and love within the Christian community. 59"
+  },
+  {
+    "name": "2 Peter",
+    "chapters": 3,
+    "description": "Warnings against false teachers; reminders of Christ’s return; emphasize knowledge and godly living. 60"
+  },
+  {
+    "name": "1 John",
+    "chapters": 5,
+    "description": "Themes of love, truth, fellowship; tests of genuine faith; Christ’s incarnation and victory over evil. 61"
+  },
+  {
+    "name": "2 John",
+    "chapters": 1,
+    "description": "Short letter about walking in truth, love, and obedience; warning against false teaching. 62"
+  },
+  {
+    "name": "3 John",
+    "chapters": 1,
+    "description": "Personal letter emphasizing hospitality, faithfulness; contrasts good and bad leadership. 63"
+  },
+  {
+    "name": "Jude",
+    "chapters": 1,
+    "description": "Letter warning against false teachers, calling believers to contend for the faith, emphasizing mercy and judgement. 64"
+  },
+  {
+    "name": "Revelation",
+    "chapters": 22,
+    "description": "Visions, symbolic prophetic imagery about the end times; the final judgment; new heavens and new earth; encouragement for perseverance. 65"
+  }
         ]
 }

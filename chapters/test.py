@@ -20,7 +20,8 @@ sys.path.append(str(parent_dir))
 
 from verses import verse
 from verses import test
-from chapters.chapter import Chapter
+from chapters.chapter import Chapter, ChapterArray 
+import utils
 
 
 """A script for testing vital methods of the chapter"""
@@ -31,7 +32,7 @@ class TestChapter(test.TestBase):
     def setUp(self):
         """create verse table in database"""
 
-        verse.create_verse_table_if_not_exists(self.conn)
+        utils.create_verse_table_if_not_exists(self.conn)
         verse_list = [
             (
                 self.conn,
@@ -144,6 +145,83 @@ class TestChapter(test.TestBase):
         self.assertEqual(list(str(v) for v in verse_array), ["Verse 1", "Verse 3", "Verse 5"])
         
 
+#Define the test case class to handle ChapterArray test suite
+class TestChapterArray(test.TestBase):
+    """The test case for ChapterArray class"""
+    
+    def setUp(self):
+        """create verse table in database"""
 
+        utils.create_verse_table_if_not_exists(self.conn)
+        verse_list = [
+            (
+                self.conn,
+                "The vision of Obadiah.This is what the sovereign Lord says about Edom--",
+                1,
+                31,
+                1,
+            ),
+            (
+                self.conn,
+                "We have heard a message from the Lord: An envoy was sent to the nations to say 'Rise, and let us go against her for battle'",
+                1,
+                31,
+                2,
+            ),
+            (
+                self.conn,
+                "The pride of your heart has decieved you, you who live in the clefts of the rock and make your home on heights.",
+                1,
+                31,
+                3,
+            ),
+            (
+                self.conn,
+                "Though you soar like the eagle and make your nests among your stars, from there I will bring you down, declares the Lord.",
+                1,
+                31,
+                4,
+            ),
+            (
+                self.conn,
+                "If thieves come to you, if robbers in the night-- Oh what a disaster, awaits you--would they not steal only as much as the wanted'",
+                1,
+                31,
+                5,
+            ),
+        ]
+
+        verse_array = list(
+            map(
+                lambda data: verse.Verse(data[0], data[1], data[2], data[3], data[4]),
+                verse_list,
+            )
+        )
+        self.chapter_array = [Chapter(self.conn, 31, 1)] * 5
+        self.chapter_array = ChapterArray(self.chapter_array)
+        
+    def tearDown(self):
+        """Delete verse table from database"""
+
+        cursor = self.conn.cursor()
+        cursor.execute("DELETE FROM verses;")
+        
+    def test__str__(self):
+        """Test if the string representation of the class works as expected"""
+        
+        self.assertEqual(str(self.chapter_array), "[<ChapterArray:5>]")
+        
+    def test__iter__(self):
+        """Tests if the iterator dunder methods works well"""
+        
+        for chapter in self.chapter_array:
+            self.assertIsInstance(chapter, Chapter)
+            
+    def test__getitem__(self):
+        """Test if it gives the right item when indexed especially when slice is used."""
+        
+        self.assertEqual(type(self.chapter_array[0]), Chapter)
+        self.assertEqual(type(self.chapter_array[:3]), ChapterArray)
+    
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,50 @@
+# Author: Ofori George
+# Commencement Date: Saturday 20 September, 2025.
+# Telephone / WhatsApp: (+233)04694485
+# Facebook: Street Python
+# Email: georgeofori2005@gmail.com
+# website: not ready yet
+# github: https://www.github.com/George200512/
+
+"""
+A script that contains the frequently used functions for easy accessibility 
+"""
+
+import json
+
+def create_verse_table_if_not_exists(conn):
+    """Create the verse table in the database if it is not present"""
+
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+            CREATE TABLE IF NOT EXISTS verses (
+            id INTEGER PRIMARY KEY,
+            text TEXT,
+            chapter_no INTEGER,
+            verse_no INTEGER,
+            book INTEGER,
+            favorite INTEGER DEFAULT 0,
+            FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
+            );
+            """
+    )
+    conn.commit()
+    
+    # Get content of the settings.json file
+def get_settings():
+    """Retrieve the content of the settings.json file and it it a dictionary"""
+
+    with open("../settings.json", mode="r", encoding="utf-8") as file:
+        data = json.load(file)
+        return data
+
+#Define a function to get the book name based on the number of the book                
+def get_book(number):
+  """Return the name of the book of the bible based on the number
+  number:the number of the book in the bible (Int)
+  RETURNS:string
+  """
+   
+  data = get_settings()
+  return data[number - 1]["name"]

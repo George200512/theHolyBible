@@ -9,7 +9,6 @@
 import pathlib
 import sys
 from collections import UserList
-import json
 
 # Get the absolute path of the script
 script_dir = pathlib.Path(__file__).parent
@@ -21,21 +20,12 @@ sys.path.append(str(parent_dir))
 import verses
 from verses import exceptions as exc
 from verses.verse import VerseArray
+import utils
 
 """
 This script creates the chapter class and also chapter array class 
 for a group of chapters.
 """
-
-
-# Get content of the settings.json file
-def get_settings():
-    """Retrieve the content of the settings.json file and it it a dictionary"""
-
-    with open("../settings.json", mode="r", encoding="utf-8") as file:
-        data = json.load(file)
-        return data
-
 
 # Create a Chapter class for a single chapter
 class Chapter(UserList):
@@ -77,9 +67,8 @@ class Chapter(UserList):
 
     def __str__(self):
         """A string representation of of the chapter class"""
-
-        data = get_settings()
-        book = data["BOOKS"][self.book - 1]
+        
+        book = get_book(self.book)
         return f"{book} {self.chapter}:1-{len(self.verse_array)}"
 
     def __repr__(self):
@@ -164,3 +153,43 @@ class Chapter(UserList):
             return self[start:stop:step]
         except exc.VerseNotFoundError:
             return VerseArray([])
+
+
+#Define a class to hold an array of chapters
+class ChapterArray(UserList):
+    """The class representing the chapter array"""
+    
+    def __init__(self, array=[]):
+        """Initializing routine"""
+        
+        self.array = array
+        if not isinstance(self.array, (tuple, list)):
+            raise ValueError("Value must be a list or a tuple.")
+        super().__init__(self.array)
+        
+    def __str__(self):
+        """A string representation of the array"""
+        
+        return f"[<ChapterArray:{len(self.array)}>]" 
+        
+    def __repr__(self):
+        """A string representing how an object is to be created"""
+        
+        return f"ChapterArray(array={self.array})"
+        
+    def __iter__(self):
+        """A dunder method that gets called when an array is being iterated over"""
+        
+        for data in self.array:
+            yield data
+            
+    def __getitem__(self, index):
+        """Get the item in an array based on its index.
+        index:the index(integer) of the item or slice.
+        return: A verse instance.
+        """
+        
+        if isinstance(index, slice):
+            sub_array = self.array[index]
+            return ChapterArray(sub_array)
+        return self.data[index]

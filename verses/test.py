@@ -15,9 +15,11 @@ import sys
 
 # Get the absolute path of the script
 script_dir = pathlib.Path(__file__).parent
-sys.path.append(str(script_dir))
+parent_dir = script_dir.parents[0]
+sys.path.append(str(parent_dir))
 
-from verse import Verse, VerseArray, create_verse_table_if_not_exists
+from verse import Verse, VerseArray
+import utils
 
 PATH = "../test.db"
 
@@ -51,7 +53,7 @@ class TestVerse(TestBase):
     def setUp(self):
         """Create database before Test begins"""
 
-        create_verse_table_if_not_exists(self.conn)
+        utils.create_verse_table_if_not_exists(self.conn)
 
     def tearDown(self):
         """Clean the verses table each Test to ensure fresh IDs"""
@@ -187,7 +189,7 @@ class TestVerseArray(TestBase):
     def setUp(self):
         """Create a table in database before every test"""
 
-        create_verse_table_if_not_exists(self.conn)
+        utils.create_verse_table_if_not_exists(self.conn)
 
     def tearDown(self):
         """Delete verse table from database"""

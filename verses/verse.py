@@ -11,27 +11,14 @@ This scripts provides the necessary classes used for representing a verse in a b
 a list of verses(verse array).
 """
 
+import sys
+import pathlib
+
+script_dir = pathlib.Path(__file__).parent
+parent_dir = script_dir.parents[0]
+sys.path.append(str(parent_dir))
+
 from collections import UserString, UserList
-
-
-def create_verse_table_if_not_exists(conn):
-    """Create the verse table in the database if it is not present"""
-
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-            CREATE TABLE IF NOT EXISTS verses (
-            id INTEGER PRIMARY KEY,
-            text TEXT,
-            chapter_no INTEGER,
-            verse_no INTEGER,
-            book INTEGER,
-            favorite INTEGER DEFAULT 0,
-            FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
-            );
-            """
-    )
-    conn.commit()
 
 
 class Favorite:
