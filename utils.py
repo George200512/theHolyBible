@@ -47,4 +47,4 @@ def get_book(number):
   """
    
   data = get_settings()
-  return data[number - 1]["name"]
+  return data["BOOKS"][number - 1]["name"]

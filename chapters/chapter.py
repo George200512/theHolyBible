@@ -68,7 +68,7 @@ class Chapter(UserList):
     def __str__(self):
         """A string representation of of the chapter class"""
         
-        book = get_book(self.book)
+        book = utils.get_book(self.book)
         return f"{book} {self.chapter}:1-{len(self.verse_array)}"
 
     def __repr__(self):
