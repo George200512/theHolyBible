@@ -11,6 +11,7 @@ A script that contains the frequently used functions for easy accessibility
 """
 
 import json
+from pathlib import Path
 
 def create_verse_table_if_not_exists(conn):
     """Create the verse table in the database if it is not present"""
@@ -31,11 +32,12 @@ def create_verse_table_if_not_exists(conn):
     )
     conn.commit()
     
-    # Get content of the settings.json file
+# Get content of the settings.json file
 def get_settings():
-    """Retrieve the content of the settings.json file and it it a dictionary"""
-
-    with open("../settings.json", mode="r", encoding="utf-8") as file:
+    """Retrieve the content of the settings.json file and it is a dictionary"""
+    
+    settings_path = Path(__file__).parent / "settings.json"
+    with open(settings_path, mode="r", encoding="utf-8") as file:
         data = json.load(file)
         return data
 
@@ -48,3 +50,7 @@ def get_book(number):
    
   data = get_settings()
   return data["BOOKS"][number - 1]["name"]
+ 
+ 
+if __name__ == "__main__":
+    print(get_book(40))

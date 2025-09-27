@@ -36,7 +36,7 @@ class Book(UserList):
         self.book_id = book_id
         self.book = utils.get_book(self.book_id)
         self.number_of_chapters = utils.get_settings()["BOOKS"][self.book_id - 1]["chapters"]
-        self.chapter_array = ChapterArray(list(map(lambda num:Chapter(self.connection, self.book_id - 1, num), range(1, self.number_of_chapters + 1))))
+        self.chapter_array = ChapterArray(list(map(lambda num:Chapter(self.connection, self.book_id, num), range(1, self.number_of_chapters + 1))))
         super().__init__(self.chapter_array)
         
     def __str__(self):
