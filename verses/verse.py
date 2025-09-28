@@ -59,7 +59,7 @@ class Favorite:
                 """
            UPDATE verses SET favorite=0 WHERE id=?
            """,
-                self.id,
+                instance.id,
             )
 
 
@@ -176,29 +176,30 @@ class Verse(UserString):
 class VerseArray(UserList):
     """A class representing a group of verses"""
 
-    def __init__(self, array=[]):
+    def __init__(self, array=None):
         """Initialise the variables needed feo creating the class"""
 
-        self.array = array
-        if not isinstance(self.array, (list, tuple)):
+        if array is None:
+            array = []
+        if not isinstance(array, (list, tuple)):
             raise ValueError("Array must be a tuple or a list")
-        super().__init__(self.array)
+        super().__init__(array)
 
     def __iter__(self):
         """A dunder method that gets called when the array is being iterated over"""
 
-        for verse in self.array:
+        for verse in self.data:
             yield verse
 
     def __str__(self):
         """A string representation of the class"""
 
-        return f"[<VerseArray:{len(self.array)}>]"
+        return f"[<VerseArray:{len(self.data)}>]"
 
     def __repr__(self):
         """A string representing how an object of the class should be created"""
 
-        return f"VerseArray(array={self.array})"
+        return f"VerseArray(array={self.data})"
 
     def __getitem__(self, index):
         """Get the item in an array based on its index.

@@ -63,7 +63,7 @@ class Book(UserList):
         if isinstance(index, int):
             if (index < 1) or index > (len(self.data)):
                 raise ChapterNotFoundError("Chapter number not found")
-            return self.data[index - 1]
+            return self.chapter_array[index - 1]
         elif isinstance(index, slice):
             start = index.start
             stop = index.stop
@@ -83,9 +83,9 @@ class Book(UserList):
                     raise ChapterNotFoundError("Chapter number not found")
             else:
                 step = 1
-            return self.data[start - 1 : stop : step]
+            return self.chapter_array[start - 1 : stop : step]
         else:
-            return self.data[index]
+            return self.chapter_array[index]
             
     def head(self, quantity=5):
         """Get the first five chapters of a book if it is more than five or all chapters
@@ -93,7 +93,7 @@ class Book(UserList):
         Returns:ChapterArray
         """
 
-        return self.data[:quantity]
+        return self.chapter_array[:quantity]
 
     def tail(self, quantity=5):
         """Get the last five chapters of a book if it is more than five or all chapters
@@ -101,7 +101,7 @@ class Book(UserList):
         Returns:ChapterArray
         """
         
-        return self.data[-quantity:]
+        return self.chapter_array[-quantity:]
 
     def chapter(self, number=1):
         """Get the chapter of the book by providing its number
@@ -132,28 +132,29 @@ class Book(UserList):
 class BookArray(UserList):
     """The class representing the book array"""
     
-    def __init__(self, array=[]):
+    def __init__(self, array=None):
         """Initializing routine"""
         
-        self.array = array
-        if not isinstance(self.array, (tuple, list)):
+        if array is None :
+            array = []
+        if not isinstance(array, (tuple, list)):
             raise ValueError("Value must be a list or a tuple.")
-        super().__init__(self.array)
+        super().__init__(array)
         
     def __str__(self):
         """A string representation of the array"""
         
-        return f"[<BookArray:{len(self.array)}>]" 
+        return f"[<BookArray:{len(self.data)}>]" 
         
     def __repr__(self):
         """A string representing how an object is to be created"""
         
-        return f"BookArray(array={self.array})"
+        return f"BookArray(array={self.data})"
         
     def __iter__(self):
         """A dunder method that gets called when an array is being iterated over"""
         
-        for data in self.array:
+        for data in self.data:
             yield data
             
     def __getitem__(self, index):
@@ -163,7 +164,7 @@ class BookArray(UserList):
         """
         
         if isinstance(index, slice):
-            sub_array = self.array[index]
+            sub_array = self.data[index]
             return BookArray(sub_array)
         return self.data[index]
             

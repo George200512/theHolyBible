@@ -159,28 +159,29 @@ class Chapter(UserList):
 class ChapterArray(UserList):
     """The class representing the chapter array"""
     
-    def __init__(self, array=[]):
+    def __init__(self, array=None):
         """Initializing routine"""
         
-        self.array = array
-        if not isinstance(self.array, (tuple, list)):
+        if array is None:
+            array = []
+        if not isinstance(array, (tuple, list)):
             raise ValueError("Value must be a list or a tuple.")
-        super().__init__(self.array)
+        super().__init__(array)
         
     def __str__(self):
         """A string representation of the array"""
         
-        return f"[<ChapterArray:{len(self.array)}>]" 
+        return f"[<ChapterArray:{len(self.data)}>]" 
         
     def __repr__(self):
         """A string representing how an object is to be created"""
         
-        return f"ChapterArray(array={self.array})"
+        return f"ChapterArray(array={self.data})"
         
     def __iter__(self):
         """A dunder method that gets called when an array is being iterated over"""
         
-        for data in self.array:
+        for data in self.data:
             yield data
             
     def __getitem__(self, index):
@@ -190,6 +191,6 @@ class ChapterArray(UserList):
         """
         
         if isinstance(index, slice):
-            sub_array = self.array[index]
-            return ChapterArray(sub_array)
+            ChapterArray(self.data[index])
+            return ChapterArray(self.data[index])
         return self.data[index]
