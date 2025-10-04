@@ -191,6 +191,5 @@ class ChapterArray(UserList):
         """
         
         if isinstance(index, slice):
-            ChapterArray(self.data[index])
             return ChapterArray(self.data[index])
         return self.data[index]
