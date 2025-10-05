@@ -41,7 +41,7 @@ def get_settings():
         data = json.load(file)
         return data
 
-#Define a function to get the book name based on the number of the book                
+# Define a function to get the book name based on the number of the book                
 def get_book(number):
   """Return the name of the book of the bible based on the number
   number:the number of the book in the bible (Int)
@@ -50,7 +50,31 @@ def get_book(number):
    
   data = get_settings()
   return data["BOOKS"][number - 1]["name"]
- 
- 
+  
+# Get the version of the name of a bible in the database """
+def version(name:str)->str:
+     """Get the version of the valid name of a bible in a database
+     name(string):A valid name in the database representing a bible
+     RETURN:string
+     """
+     
+     bible = get_settings()[" DATABASES"].get(name)
+     if bible is None:
+         raise ValueError("Name not found in database")
+     return bible["version"]
+
+ # Get the language of the name of a bible in the database """
+def language(name:str)->str:
+     """Get the language of the valid name of a bible in a database
+     name(string):A valid name in the database representing a bible
+     RETURN:string
+     """
+     
+     bible = get_settings()[" DATABASES"].get(name)
+     if bible is None:
+         raise ValueError("Name not found in database")
+     return bible["language"]
+     
+       
 if __name__ == "__main__":
-    print(get_book(40))
+    pass
