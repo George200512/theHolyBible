@@ -12,11 +12,15 @@ A script to create the bible class and the compiler class
 from collections import UserList
 import sqlite3
 import json
+import requests as rq 
+import re
 
 from books.book import BookArray, Book
 from books import exceptions as exc
 import utils
 import exceptions as bexc
+
+API_KEY = "f8e81e04a534162fea325709577cd88e"
 
 # Create the bible class
 class Bible(UserList):
@@ -126,19 +130,8 @@ class Bible(UserList):
         """
         
         return self.book_array[-quantity:]
-        
-    def book(self, number=1):
-        """Get the book of the bible by providing its number
-        number:an integer representing the book number
-        RETURNS:A book instance if no error occurs or none if it occurs
-        """
 
-        try:
-            return self[number]
-        except exc.BookNotFoundError:
-            return None
-
-    def verses(self, start=1, stop=1, step=None):
+    def books(self, start=1, stop=1, step=None):
         """Get a list of book from the bible
         start:where to start slicing the bible defaults to 1
         stop:where to stop slicing the bible defaults to 1
@@ -174,10 +167,12 @@ class Bible(UserList):
           """
           
           no_of_chapters = sum(map(lambda book_id : _get_number_of_chapters(book_id), range(1, 66 + 1)))
-          no_of_verses = 0;
+          no_of_verses = 0
+          no_of_words = 0
           for book, book_id in enumerate(self, start=1):
               for chapter, chapter_id in enumerate(book, start=1):
                   no_of_verses += _get_number_of_verses(book_id, chapter_id)
+                  no_of_words += _get_number_of_words(book_id, chapter_id)
                   
           data = {
           "name": self.name,
@@ -186,6 +181,7 @@ class Bible(UserList):
           "number_of_books": self.no_of_books,
           "number_of_chapters": no_of_chapters,
           "number_of_verses": no_of_verses, 
+          "number_of_words": no_of_words
           }
           return json.dumps(data)
           
@@ -207,3 +203,34 @@ class Bible(UserList):
         """ 
         
         return len(self[book_number][chapter_number])
+        
+    def _get_number_of_words(self, book_number, chapter_number):
+        """
+        Get the number of words in each verse.
+        book_number(int): The nth book of a bible.Starts from 1
+        chapter_number(int): The nth chapter of a book.Starts from 1.
+        RETURN: a generator that yields the number of words in each verse of a chapter.
+        """
+        
+        no_of_words = 0
+        no_of_words_in_a_chapter = 0;
+        pattern = re.compile(r'\w')
+        for verse in self[book_number][chapter_number]:
+            for word in verse.split():
+                if pattern.match(word):
+                    no_of_words += 1
+            no_of_a_words_in_a_chapter += no_of_words
+        yield no_of_words_in_a_chapter
+        
+        
+# Define the compiler class
+class Compiler:
+    """
+    A compiler class is responsible for getting the bible with the specified version and language 
+    from the internet and create a new database for a new bible version or update the existing one.
+    """
+    
+    def __init__(self):
+        """A method that is called immediately an object of the class is created"""
+        
+        pass
