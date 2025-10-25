@@ -13,6 +13,8 @@ A script that contains the frequently used functions for easy accessibility
 import json
 from pathlib import Path
 
+SETTINGS_PATH = Path(__file__).parent / "settings.json"
+
 def create_verse_table_if_not_exists(conn):
     """Create the verse table in the database if it is not present"""
 
@@ -36,8 +38,7 @@ def create_verse_table_if_not_exists(conn):
 def get_settings():
     """Retrieve the content of the settings.json file and it is a dictionary"""
     
-    settings_path = Path(__file__).parent / "settings.json"
-    with open(settings_path, mode="r", encoding="utf-8") as file:
+    with open(SETTINGS_PATH, mode="r", encoding="utf-8") as file:
         data = json.load(file)
         return data
 
@@ -75,6 +76,21 @@ def language(name:str)->str:
          raise ValueError("Name not found in database")
      return bible["language"]
      
+#A function to set or change values in the settings file
+def set_settings(key, value):
+       """
+       Change or set the value of a key in the settings file.
+       key(str): the key of the value you want to change or set.
+       value(dict): the new value of the key.
+       RETURNS: None.
+       """
+       
+       settings = get_settings()
+       if settings.get(key) is not None:
+           with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
+               settings[key] = value
+               json.dump(settings, file, indent=4)
+               
        
 if __name__ == "__main__":
     pass

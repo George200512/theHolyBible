@@ -14,15 +14,18 @@ import sqlite3
 import json
 import requests as rq 
 import re
+import os
+from dotenv import load_dotenv
 
 from books.book import BookArray, Book
 from books import exceptions as exc
 import utils
 import exceptions as bexc
 
-API_KEY = "f8e81e04a534162fea325709577cd88e"
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
+URL = "https://api.scripture.api.bible/v1/bibles"
 
-# Create the bible class
 class Bible(UserList):
     """The bible class for getting the bible version in the specified language
     if found in database"""
@@ -233,4 +236,13 @@ class Compiler:
     def __init__(self):
         """A method that is called immediately an object of the class is created"""
         
-        pass
+        if utils. get_settings().get("VERSIONS") is None:
+            self.response = rq.get(URL, headers={"api-key":API_KEY})
+            if self.response.status_code == 200:
+                self.data = self.response. json()
+                print(self.data)
+            else:
+                print(self.response.text)
+     
+                
+c = Compiler()                                      
