@@ -86,10 +86,9 @@ def set_settings(key, value):
        """
        
        settings = get_settings()
-       if settings.get(key) is not None:
-           with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
-               settings[key] = value
-               json.dump(settings, file, indent=4)
+       with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
+           settings[key] = value
+           json.dump(settings, file, indent=4)
                
        
 if __name__ == "__main__":

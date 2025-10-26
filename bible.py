@@ -22,7 +22,8 @@ from books import exceptions as exc
 import utils
 import exceptions as bexc
 
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 API_KEY = os.getenv("API_KEY")
 URL = "https://api.scripture.api.bible/v1/bibles"
 
@@ -236,11 +237,24 @@ class Compiler:
     def __init__(self):
         """A method that is called immediately an object of the class is created"""
         
+        versions = {}
         if utils. get_settings().get("VERSIONS") is None:
             self.response = rq.get(URL, headers={"api-key":API_KEY})
             if self.response.status_code == 200:
                 self.data = self.response. json()
-                print(self.data)
+                self.data = self.data["data"] 
+                for item in self.data:
+                    bible = {}
+                    bible["id"] = item["id"]
+                    bible["name"] = item["name"]
+                    bible["abbreviation"] = item["abbreviation"]
+                    bible["language_id"] = item["language"]["id"]
+                    bible["language_name"] = item["language"]["name"]
+                    bible["country_name"] = item["countries"][0]["name"]
+                    bible["type"] = item["type"]
+                    bible["updatedAt"] = item["updatedAt"]
+                    versions[item["id"]] = bible
+                utils.set_settings("VERSIONS", versions)
             else:
                 print(self.response.text)
      
