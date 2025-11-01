@@ -13,6 +13,7 @@ from collections import UserList
 import sqlite3
 import json
 import requests as rq 
+from requests.exceptions import Timeout, ConnectionError, HTTPError
 import re
 import os
 from dotenv import load_dotenv
@@ -238,9 +239,13 @@ class Compiler:
         """A method that is called immediately an object of the class is created"""
         
         versions = {}
+        bible_ids = {}
         if utils. get_settings().get("VERSIONS") is None:
-            self.response = rq.get(URL, headers={"api-key":API_KEY})
-            if self.response.status_code == 200:
+            try:
+                self.response = rq.get(URL, headers={"api-key":API_KEY}, timeout=3.7)
+            except (HTTPError, ConnectionError, Timeout) as e:
+                raise bexc.NonBiblicalError(e)
+            else:
                 self.data = self.response. json()
                 self.data = self.data["data"] 
                 for item in self.data:
@@ -253,10 +258,10 @@ class Compiler:
                     bible["country_name"] = item["countries"][0]["name"]
                     bible["type"] = item["type"]
                     bible["updatedAt"] = item["updatedAt"]
+                    bible_ids[f"{bible['abbreviation']}_{bible['language_id']}"] = bible["id"]
                     versions[item["id"]] = bible
                 utils.set_settings("VERSIONS", versions)
-            else:
-                print(self.response.text)
+                utils.set_settings("BIBLE_IDS", bible_ids)
      
                 
 c = Compiler()                                      
