@@ -264,4 +264,4 @@ class Compiler:
                 utils.set_settings("BIBLE_IDS", bible_ids)
      
                 
-c = Compiler()                                      
+#c = Compiler()                                      
