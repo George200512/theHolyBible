@@ -51,7 +51,28 @@ class TestCompiler(unittest.TestCase):
         self.assertEqual(mock_utils.set_settings.call_count, 2)
         self.assertTrue(hasattr(compiler, "data"))
         self.assertEqual(compiler.data[0]["id"], "1234abcd5678efgh9012ijkl")
+       
+    @patch.object(Compiler, "__init__", lambda self: None) 
+    def test_compile_chapters(self):
+        """
+        Test whether the method compiles the chapters into the database.
+        """
         
-        
+        compiler = Compiler()
+        settings_mock = {
+            "BIBLE_IDS":{
+                "KJV_en": "de4e12af7f28f599-02"
+            }
+        }
+        with patch("utils.get_settings", return_value=settings_mock):
+            kwargs = {
+                "VERSION": "KJV",
+                "LANGUAGE": "en",
+                "BOOK": "GEN",
+                "CHAPTER": "GEN.1"
+            }
+            mock_conn = MagicMock()
+            compiler.compile_chapters(mock_conn, **kwargs)
+            
 if __name__ == "__main__" :
     unittest.main()
