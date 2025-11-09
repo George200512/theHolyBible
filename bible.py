@@ -17,6 +17,7 @@ from requests.exceptions import Timeout, ConnectionError, HTTPError
 import re
 import os
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -282,11 +283,27 @@ class Compiler:
         
         version = kwargs["VERSION"]
         language = kwargs["LANGUAGE"]
-        book = kwargs["BOOK"]
+        book_id = kwargs["BOOK"]
         chapter_id = kwargs["CHAPTER"]
         bible_ids = utils.get_settings()["BIBLE_IDS"]
         id_key = f"{version}_{language}"
         if id_key in bible_ids.keys():
             bible_id = bible_ids[id_key]
+            chapter_id = f"{book_id}.{chapter_id}"
+            headers = {
+            "api-key": API_KEY,
+            "accept":"application/json"
+            }
+            
+            try:
+                response = rq.get(
+                    f"{URL}/{bible_id}/chapters/{chapter_id}",
+                    headers=headers
+                )
+                html_content = response.json()["data"]["content"]
+                soup = BeautifulSoup(html_content, "html.parser")
+                print(soup.find_all("span", class_="v"))
+            except (HTTPError, ConnectionError, Timeout) as e:
+                raise NonBiblicalError(e)
         else:
             raise KeyError("Version or language not found")    
