@@ -21,7 +21,7 @@ class BibleNotAvailableError(Exception):
         
 #The class for internet errors
 class NonBiblicalError(rexc.RequestException):
-    """An error that is thrown for errors that doesn't concern fetching the bible from database"""
+    """An errors that is thrown for errors that doesn't concern fetching the bible from database"""
     
     def __init__(self, message):
         self.message = message 

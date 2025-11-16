@@ -18,11 +18,13 @@ import re
 import os
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
 
 from books.book import BookArray, Book
 from books import exceptions as exc
 import utils
 import exceptions as bexc
+from verses.verse import Verse 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
@@ -273,7 +275,7 @@ class Compiler:
                 utils.set_settings("VERSIONS", versions)
                 utils.set_settings("BIBLE_IDS", bible_ids)
 
-    def compile_chapters(self, conn, **kwargs):
+    def compile_chapter(self, conn, **kwargs):
         """
         Get the verses of a chapter of a book and then arrange it in the database.
         conn: an instance of the the sqlite3 connection
@@ -302,8 +304,31 @@ class Compiler:
                 )
                 html_content = response.json()["data"]["content"]
                 soup = BeautifulSoup(html_content, "html.parser")
-                print(soup.find_all("span", class_="v"))
+                verse_list = []
+                for paragraph in soup.select("p.p"):
+                    for v in paragraph.select("span.v"):
+                        verse = []
+                        verse.append(conn)
+                        verse.append(v. next_sibling.strip())
+                        verse.append(kwargs["CHAPTER"])
+                        verse.append(book_id)
+                        verse.append(v.get("data-number")) 
+                        verse_list.append(verse)
+                map(
+                    lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
+                    verse_list
+                )
             except (HTTPError, ConnectionError, Timeout) as e:
                 raise NonBiblicalError(e)
         else:
             raise KeyError("Version or language not found")    
+            
+    def compile_book(self, conn, book_id):
+        """
+        Get all chapters of a book and place them in the database.
+        conn: an instance of the sqlite3 connection 
+        book_id: a string representing a book. eg.GEN for Genesis
+        RETURNS: None
+        """
+        
+        pass

@@ -60,7 +60,7 @@ class Chapter(UserList):
                 book=data[2],
                 verse_no=data[3],
             ),
-            rows,
+            rows
         )
         verse_array = list(verse_array)
         return verses.verse.VerseArray(verse_array)
