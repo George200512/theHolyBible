@@ -73,6 +73,18 @@ class TestCompiler(unittest.TestCase):
                 mock_conn = MagicMock()
                 compiler.compile_chapter(mock_conn, **kwargs)
                 
+    def test_compile_book(self):
+         """
+         Test whether the compile book method compiles the bible well.
+         """
+         
+         with patch.object(Compiler, "__init__", lambda self: None):
+             with patch.object(Compiler, "compile_chapter", lambda self: None):
+                 compiler = Compiler()
+                 compiler.compile_book(MagicMock(), **{
+                 "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
+                 })
+             
  
                 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 # Facebook: Street Python
 # Email: georgeofori2005@gmail.com
 # website: https://george200512.github.io/george-ofori.com/
-# github: https://www.github.com/George200512/
+# github: https://george-ofori.vercel.app
 
 """
 A script to create the bible class and the compiler class
@@ -19,6 +19,7 @@ import os
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
+import threading
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -323,12 +324,56 @@ class Compiler:
         else:
             raise KeyError("Version or language not found")    
             
-    def compile_book(self, conn, book_id):
+    def compile_book(self, conn, **kwargs):
         """
         Get all chapters of a book and place them in the database.
         conn: an instance of the sqlite3 connection 
-        book_id: a string representing a book. eg.GEN for Genesis
+        kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
         
-        pass
+        version = kwargs["VERSION"]
+        language= kwargs["LANGUAGE"]
+        book_id = kwargs["BOOK_ID"]
+        books = utils.get_settings()["BOOKS"]
+        chapter_no = None
+        for book in books:        
+            if book["id"][0] == book_id:
+                chapter_no = book["chapters"]
+                break
+                    
+        parameters = []
+        for chapter in range(1, chapter_no + 1):
+            parameter = {}
+            parameter["VERSION"] = version 
+            parameter["LANGUAGE"] = language 
+            parameter["BOOK"] = book_id
+            parameter["CHAPTER"] = chapter
+            parameters.append(parameter)
+                
+        with ThreadPoolExecutor(max_workers=chapter_no) as executor:
+            executor.map(
+            lambda parameter: self.compile_chapter(conn, **parameter),
+                parameters 
+                )
+                
+    def compile_bible(self, version, language, name=None):
+        """
+        Compile the whole bible by compile individual books.
+        version: a string representing version of bible. eg.NKJV
+        language: a string representing language of bible. eg.en(English),
+        name: a string representing the name of the bible. defaults:None
+        RETURNS:None
+        """
+        connection = None
+        if name is None:
+            path = f"DATABASES/{version}_{language}/{version}_{language}.db"
+            connection = sqlite3.connect(path, check_same_thread=False)
+        else:
+            path = f"DATABASES/{name}/{name}.db"
+            connection = sqlite3.connect(path, check_same_thread=False)
+        book_ids = []
+        books = get_settings()["BOOKS"]
+        for book in books:
+            book_ids.append(book["id"][0])
+        

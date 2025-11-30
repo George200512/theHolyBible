@@ -4,332 +4,398 @@
         {
             "name": "Genesis",
             "chapters": 50,
-            "description": "Tells of creation, the fall of humanity, the early history of mankind, the patriarchs Abraham, Isaac, Jacob, and Joseph; God\u2019s covenant promises to them upheld even in hardship. \uea010\uea02"
+            "description": "Tells of creation, the fall of humanity, the early history of mankind, the patriarchs Abraham, Isaac, Jacob, and Joseph; God\u2019s covenant promises to them upheld even in hardship. \uea010\uea02",
+            "id": ["GEN"]
         },
         {
             "name": "Exodus",
             "chapters": 40,
-            "description": "Describes Israel\u2019s slavery in Egypt, Moses\u2019 leadership, the plagues, the Exodus from Egypt, covenant at Sinai, and instructions for worship. \uea011\uea02"
+            "description": "Describes Israel\u2019s slavery in Egypt, Moses\u2019 leadership, the plagues, the Exodus from Egypt, covenant at Sinai, and instructions for worship. \uea011\uea02",
+            "id": ["EXO"]
         },
         {
             "name": "Leviticus",
             "chapters": 27,
-            "description": "Focuses on laws and rituals, holiness codes, priestly duties, and how Israel is to live set apart; emphasizes worship and ethical living. \uea012\uea02"
+            "description": "Focuses on laws and rituals, holiness codes, priestly duties, and how Israel is to live set apart; emphasizes worship and ethical living. \uea012\uea02",
+            "id": ["LEV"]
         },
         {
             "name": "Numbers",
             "chapters": 36,
-            "description": "Narrates Israel\u2019s wandering in the wilderness, census data, rebellions, provisions, and God\u2019s guidance amid disobedience. \uea013\uea02"
+            "description": "Narrates Israel\u2019s wandering in the wilderness, census data, rebellions, provisions, and God\u2019s guidance amid disobedience. \uea013\uea02",
+            "id":["NUM"]
         },
         {
             "name": "Deuteronomy",
             "chapters": 34,
-            "description": "Collection of Moses\u2019 speeches reviewing law, covenant obligations, and Israel\u2019s history as they prepare to enter the Promised Land. \uea014\uea02"
+            "description": "Collection of Moses\u2019 speeches reviewing law, covenant obligations, and Israel\u2019s history as they prepare to enter the Promised Land. \uea014\uea02",
+            "id":["DEU"]
         },
         {
             "name": "Joshua",
             "chapters": 24,
-            "description": "Israel, under Joshua, conquers Canaan, divides the land among the tribes, and renews their covenant with God. \uea015\uea02"
+            "description": "Israel, under Joshua, conquers Canaan, divides the land among the tribes, and renews their covenant with God. \uea015\uea02",
+            "id":["JOS"]
         },
         {
             "name": "Judges",
             "chapters": 21,
-            "description": "Cycle of Israel sinning, being oppressed, crying out, and being rescued by judges; shows the consequences of turning from covenant faithfulness. \uea016\uea02"
+            "description": "Cycle of Israel sinning, being oppressed, crying out, and being rescued by judges; shows the consequences of turning from covenant faithfulness. \uea016\uea02",
+           "id":["JDG"]
         },
         {
             "name": "Ruth",
             "chapters": 4,
-            "description": "A story of loyalty, redemption, and God\u2019s providence, focusing on Ruth, a Moabite woman, and her integration into Israel\u2019s story. \uea017\uea02"
+            "description": "A story of loyalty, redemption, and God\u2019s providence, focusing on Ruth, a Moabite woman, and her integration into Israel\u2019s story. \uea017\uea02",
+            "id":["RUT"]
         },
         {
             "name": "1 Samuel",
             "chapters": 31,
-            "description": "Transition of Israel from the period of judges to monarchy; story of Samuel, Saul, and the rise of David. \uea018\uea02"
+            "description": "Transition of Israel from the period of judges to monarchy; story of Samuel, Saul, and the rise of David. \uea018\uea02",
+            "id":[" 1SA"]
         },
         {
             "name": "2 Samuel",
             "chapters": 24,
-            "description": "Reign of David: his sins, successes, consolidation of the kingdom, and God\u2019s promises to David\u2019s house. \uea019\uea02"
+            "description": "Reign of David: his sins, successes, consolidation of the kingdom, and God\u2019s promises to David\u2019s house. \uea019\uea02",
+            "id":["2SA"]
         },
         {
             "name": "1 Kings",
             "chapters": 22,
-            "description": "Begins with Solomon\u2019s reign, wisdom, and temple building; then divides kingdom histories of Israel and Judah, decline, idolatry, and prophets. \uea0110\uea02"
+            "description": "Begins with Solomon\u2019s reign, wisdom, and temple building; then divides kingdom histories of Israel and Judah, decline, idolatry, and prophets. \uea0110\uea02",
+            "id":["1KI"]
         },
         {
             "name": "2 Kings",
             "chapters": 25,
-            "description": "Further history of Israel and Judah\u2019s kings, fall of Israel to Assyria, Judah to Babylon; prophetic ministries and judgment. \uea0111\uea02"
+            "description": "Further history of Israel and Judah\u2019s kings, fall of Israel to Assyria, Judah to Babylon; prophetic ministries and judgment. \uea0111\uea02",
+            "id":["2KI"]
         },
         {
             "name": "1 Chronicles",
             "chapters": 29,
-            "description": "Retrospective history emphasizing David and the temple; genealogies; religious reforms in Judah. \uea0112\uea02"
+            "description": "Retrospective history emphasizing David and the temple; genealogies; religious reforms in Judah. \uea0112\uea02",
+            "id":["1CH"]
         },
         {
             "name": "2 Chronicles",
             "chapters": 36,
-            "description": "Continuation of Israel/Judah\u2019s history focusing more on Judah, temple worship, reforms, exile, and hope. \uea0113\uea02"
+            "description": "Continuation of Israel/Judah\u2019s history focusing more on Judah, temple worship, reforms, exile, and hope. \uea0113\uea02",
+            "id":["2CH"]
         },
         {
             "name": "Ezra",
             "chapters": 10,
-            "description": "Return from exile under Cyrus, rebuilding of the temple, reforms among the returned exiles, leadership of Ezra. \uea0114\uea02"
+            "description": "Return from exile under Cyrus, rebuilding of the temple, reforms among the returned exiles, leadership of Ezra. \uea0114\uea02",
+            "id":["EZR"]
         },
         {
             "name": "Nehemiah",
             "chapters": 13,
-            "description": "Nehemiah leads rebuilding of Jerusalem\u2019s walls, community reforms, renewed covenant, and restoration. \uea0115\uea02"
+            "description": "Nehemiah leads rebuilding of Jerusalem\u2019s walls, community reforms, renewed covenant, and restoration. \uea0115\uea02",
+            "id":["NEH"]
         },
         {
             "name": "Esther",
             "chapters": 10,
-            "description": "Story of Esther\u2019s courage in Persia, saving the Jewish people from genocide, God\u2019s providence in unexpected ways. \uea0116\uea02"
+            "description": "Story of Esther\u2019s courage in Persia, saving the Jewish people from genocide, God\u2019s providence in unexpected ways. \uea0116\uea02",
+            "id":["EST"]
         },
         {
             "name": "Job",
             "chapters": 42,
-            "description": "Explores suffering, divine justice, integrity; dialogues between Job and his friends; God\u2019s response from the whirlwind. \uea0117\uea02"
+            "description": "Explores suffering, divine justice, integrity; dialogues between Job and his friends; God\u2019s response from the whirlwind. \uea0117\uea02",
+            "id":["JOB"]
         },
         {
             "name": "Psalms",
             "chapters": 150,
-            "description": "Collection of poems, hymns, praises, laments; used in Israel\u2019s worship life; wide range of emotions and human experience. \uea0118\uea02"
+            "description": "Collection of poems, hymns, praises, laments; used in Israel\u2019s worship life; wide range of emotions and human experience. \uea0118\uea02",
+            "id":["PSA"]
         },
         {
             "name": "Proverbs",
             "chapters": 31,
-            "description": "Wisdom sayings, advice for life, character, discipline, and fear of the Lord as foundational. \uea0119\uea02"
+            "description": "Wisdom sayings, advice for life, character, discipline, and fear of the Lord as foundational. \uea0119\uea02",
+            "id":["PRO"]
         },
         {
             "name": "Ecclesiastes",
             "chapters": 12,
-            "description": "Reflections on meaning, vanity, the fleeting nature of life and human accomplishments; calls to fear God and enjoy life. \uea0120\uea02"
+            "description": "Reflections on meaning, vanity, the fleeting nature of life and human accomplishments; calls to fear God and enjoy life. \uea0120\uea02",
+            "id":["ECC"]
         },
         {
             "name": "Song of Solomon",
             "chapters": 8,
-            "description": "Poetic love dialogue between lovers; often seen as celebrating human love, marriage, and sometimes allegorical spiritual love. \uea0121\uea02"
+            "description": "Poetic love dialogue between lovers; often seen as celebrating human love, marriage, and sometimes allegorical spiritual love. \uea0121\uea02",
+            "id":["SNG"]
         },
         {
             "name": "Isaiah",
             "chapters": 66,
-            "description": "Prophecies of judgment and hope; visions of God\u2019s holiness; future promises including the suffering servant, restoration, and messianic themes. \uea0122\uea02"
+            "description": "Prophecies of judgment and hope; visions of God\u2019s holiness; future promises including the suffering servant, restoration, and messianic themes. \uea0122\uea02",
+            "id":["ISA"]
         },
         {
             "name": "Jeremiah",
             "chapters": 52,
-            "description": "Prophet Jeremiah\u2019s warnings of impending judgment for Judah, calls to repentance, suffering of the prophet, and future restoration. \uea0123\uea02"
+            "description": "Prophet Jeremiah\u2019s warnings of impending judgment for Judah, calls to repentance, suffering of the prophet, and future restoration. \uea0123\uea02",
+            "id":["JER"]
         },
         {
             "name": "Lamentations",
             "chapters": 5,
-            "description": "Poetic laments over Jerusalem\u2019s destruction; grief, mourning, confession, and hope. \uea0124\uea02"
+            "description": "Poetic laments over Jerusalem\u2019s destruction; grief, mourning, confession, and hope. \uea0124\uea02",
+            "id":["LAM"]
         },
         {
             "name": "Ezekiel",
             "chapters": 48,
-            "description": "Prophecies during exile; visions, symbolic acts; judgment and hope; restoration and new temple vision. \uea0125\uea02"
+            "description": "Prophecies during exile; visions, symbolic acts; judgment and hope; restoration and new temple vision. \uea0125\uea02",
+            "id":["EZK"]
         },
         {
             "name": "Daniel",
             "chapters": 12,
-            "description": "Stories and visions; God\u2019s sovereignty over kingdoms; trials of faith; apocalyptic visions about the end times and God\u2019s kingdom. \uea0126\uea02"
+            "description": "Stories and visions; God\u2019s sovereignty over kingdoms; trials of faith; apocalyptic visions about the end times and God\u2019s kingdom. \uea0126\uea02",
+            "id":["DAN"]
         },
         {
             "name": "Hosea",
             "chapters": 14,
-            "description": "Marriage metaphor for Israel\u2019s unfaithfulness; God\u2019s steadfast love and restoration despite betrayal. \uea0127\uea02"
+            "description": "Marriage metaphor for Israel\u2019s unfaithfulness; God\u2019s steadfast love and restoration despite betrayal. \uea0127\uea02",
+            "id":["HOS"]
         },
         {
             "name": "Joel",
             "chapters": 3,
-            "description": "Prophetic announcements of judgment; call to repentance; promise of outpouring of God\u2019s spirit and restoration. \uea0128\uea02"
+            "description": "Prophetic announcements of judgment; call to repentance; promise of outpouring of God\u2019s spirit and restoration. \uea0128\uea02",
+            "id":["JOL"]
         },
         {
             "name": "Amos",
             "chapters": 9,
-            "description": "Prophet Amos warns Israel of social injustice, hypocrisy; emphasizes justice, righteousness, and warnings before restoration. \uea0129\uea02"
+            "description": "Prophet Amos warns Israel of social injustice, hypocrisy; emphasizes justice, righteousness, and warnings before restoration. \uea0129\uea02",
+            "id":["AMO"]
         },
         {
             "name": "Obadiah",
             "chapters": 1,
-            "description": "Shortest Old Testament book; prophecy against Edom for pride and betrayal, promise of restoration to Israel. \uea0130\uea02"
+            "description": "Shortest Old Testament book; prophecy against Edom for pride and betrayal, promise of restoration to Israel. \uea0130\uea02",
+            "id":["OBA"]
         },
         {
             "name": "Jonah",
             "chapters": 4,
-            "description": "Story of a reluctant prophet, God\u2019s mercy to Nineveh; themes of obedience, compassion, and forgiveness. \uea0131\uea02"
+            "description": "Story of a reluctant prophet, God\u2019s mercy to Nineveh; themes of obedience, compassion, and forgiveness. \uea0131\uea02",
+            "id":["JON"]
         },
         {
             "name": "Micah",
             "chapters": 7,
-            "description": "Prophecies including messages about judgment for social injustice and hope for a ruler from Bethlehem; God\u2019s requirements for justice, mercy, humility. \uea0132\uea02"
+            "description": "Prophecies including messages about judgment for social injustice and hope for a ruler from Bethlehem; God\u2019s requirements for justice, mercy, humility. \uea0132\uea02",
+            "id":["MIC"]
         },
         {
             "name": "Nahum",
             "chapters": 3,
-            "description": "Prophecy against Nineveh; God\u2019s justice and wrath against cruelty. \uea0133\uea02"
+            "description": "Prophecy against Nineveh; God\u2019s justice and wrath against cruelty. \uea0133\uea02",
+            "id":["NAM"]
         },
         {
             "name": "Habakkuk",
             "chapters": 3,
-            "description": "Dialogues between prophet and God about injustice; vision, lament, and ultimately trust in God despite unanswered questions. \uea0134\uea02"
+            "description": "Dialogues between prophet and God about injustice; vision, lament, and ultimately trust in God despite unanswered questions. \uea0134\uea02",
+            "id":["HAB"]
         },
         {
             "name": "Zephaniah",
             "chapters": 3,
-            "description": "Warning of coming Day of the LORD, calls to repentance; promise of restoration for remnant. \uea0135\uea02"
+            "description": "Warning of coming Day of the LORD, calls to repentance; promise of restoration for remnant. \uea0135\uea02",
+            "id":["ZEP"]
         },
         {
             "name": "Haggai",
             "chapters": 2,
-            "description": "Encouragement to rebuild the temple after exile; God\u2019s promise to dwell among His people. \uea0136\uea02"
+            "description": "Encouragement to rebuild the temple after exile; God\u2019s promise to dwell among His people. \uea0136\uea02",
+            "id":["HAG"]
         },
         {
             "name": "Zechariah",
             "chapters": 14,
-            "description": "Visions, prophetic oracles, encouragement to return; future hopes including messianic rule. \uea0137\uea02"
+            "description": "Visions, prophetic oracles, encouragement to return; future hopes including messianic rule. \uea0137\uea02",
+            "id":["ZEC"]
         },
         {
             "name": "Malachi",
             "chapters": 4,
-            "description": "Final prophetic word of the Old Testament; addresses Israel\u2019s faithlessness, call to righteous living, promise of messenger. \uea0138\uea02"
+            "description": "Final prophetic word of the Old Testament; addresses Israel\u2019s faithlessness, call to righteous living, promise of messenger. \uea0138\uea02",
+            "id":["MAL"]
         },
         {
             "name": "Matthew",
             "chapters": 28,
-            "description": "One of the Gospels; presents Jesus as Messiah, King of the Jews; includes genealogy, teachings, parables, death and resurrection. \uea0139\uea02"
+            "description": "One of the Gospels; presents Jesus as Messiah, King of the Jews; includes genealogy, teachings, parables, death and resurrection. \uea0139\uea02",
+            "id":["MAT"]
         },
         {
             "name": "Mark",
             "chapters": 16,
-            "description": "A fast-paced Gospel emphasizing Jesus\u2019 actions, authority, suffering, and that He came to serve; includes many miracles. \uea0140\uea02"
+            "description": "A fast-paced Gospel emphasizing Jesus\u2019 actions, authority, suffering, and that He came to serve; includes many miracles. \uea0140\uea02",
+            "id":["MRK"]
         },
         {
             "name": "Luke",
             "chapters": 24,
-            "description": "Gospel giving detailed narrative of Jesus\u2019 life, ministry, compassion, parables; careful ordering and historical detail; bridge between Old Testament and early church. \uea0141\uea02"
+            "description": "Gospel giving detailed narrative of Jesus\u2019 life, ministry, compassion, parables; careful ordering and historical detail; bridge between Old Testament and early church. \uea0141\uea02",
+            "id":["LUK"]
         },
         {
             "name": "John",
             "chapters": 21,
-            "description": "Gospel focusing on Jesus\u2019 identity, signs, \u2018I am\u2019 statements; emphasizes belief, eternal life, love. \uea0142\uea02"
+            "description": "Gospel focusing on Jesus\u2019 identity, signs, \u2018I am\u2019 statements; emphasizes belief, eternal life, love. \uea0142\uea02",
+            "id":["JHN"]
         },
         {
             "name": "Acts",
             "chapters": 28,
-            "description": "History of the early Christian church after Jesus\u2019 ascension; spread of the Gospel through apostles; key figures include Peter and Paul. \uea0143\uea02"
+            "description": "History of the early Christian church after Jesus\u2019 ascension; spread of the Gospel through apostles; key figures include Peter and Paul. \uea0143\uea02",
+            "id":["ACT"]
         },
         {
             "name": "Romans",
             "chapters": 16,
-            "description": "Paul\u2019s letter to the church in Rome explaining the gospel, justification by faith, relation of Israel and Gentiles. \uea0144\uea02"
+            "description": "Paul\u2019s letter to the church in Rome explaining the gospel, justification by faith, relation of Israel and Gentiles. \uea0144\uea02",
+            "id":["ROM"]
         },
         {
             "name": "1 Corinthians",
             "chapters": 16,
-            "description": "Paul addresses problems in Corinth: division, immorality, spiritual gifts, resurrection; guidance for church life. \uea0145\uea02"
+            "description": "Paul addresses problems in Corinth: division, immorality, spiritual gifts, resurrection; guidance for church life. \uea0145\uea02",
+            "id":["1CO"]
         },
         {
             "name": "2 Corinthians",
             "chapters": 13,
-            "description": "Paul defends his apostleship, encourages reconciliation, highlights suffering and God\u2019s comfort. \uea0146\uea02"
+            "description": "Paul defends his apostleship, encourages reconciliation, highlights suffering and God\u2019s comfort. \uea0146\uea02",
+            "id":["2CO"]
         },
         {
             "name": "Galatians",
             "chapters": 6,
-            "description": "Paul refutes legalism, teaches justification by faith in Christ apart from works of the law; Christian freedom. \uea0147\uea02"
+            "description": "Paul refutes legalism, teaches justification by faith in Christ apart from works of the law; Christian freedom. \uea0147\uea02",
+            "id":["GAL"]
         },
         {
             "name": "Ephesians",
             "chapters": 6,
-            "description": "Paul\u2019s letter about the church as the body of Christ; unity, spiritual blessings, Christian conduct. \uea0148\uea02"
+            "description": "Paul\u2019s letter about the church as the body of Christ; unity, spiritual blessings, Christian conduct. \uea0148\uea02",
+            "id":["EPH"]
         },
         {
             "name": "Philippians",
             "chapters": 4,
-            "description": "Letter of encouragement and joy; Christ\u2019s humility and exaltation; contentment in all circumstances. \uea0149\uea02"
+            "description": "Letter of encouragement and joy; Christ\u2019s humility and exaltation; contentment in all circumstances. \uea0149\uea02",
+            "id":["PHP"]
         },
         {
             "name": "Colossians",
             "chapters": 4,
-            "description": "Paul emphasizes Christ\u2019s supremacy and sufficiency; encourages believers to live in Christ and avoid false teachings. \uea0150\uea02"
+            "description": "Paul emphasizes Christ\u2019s supremacy and sufficiency; encourages believers to live in Christ and avoid false teachings. \uea0150\uea052",
+            "id": ["COL"]
         },
         {
             "name": "1 Thessalonians",
             "chapters": 5,
-            "description": "Paul encourages believers, teaches about Christ\u2019s return, holiness, and how to live in light of that coming. \uea0151\uea02"
+            "description": "Paul encourages believers, teaches about Christ\u2019s return, holiness, and how to live in light of that coming. \uea0151\uea02",
+            "id": ["1TH"]
         },
         {
             "name": "2 Thessalonians",
             "chapters": 3,
-            "description": "Addresses misunderstandings about Christ\u2019s return; encourages perseverance; clarifies timing. \uea0152\uea02"
+            "description": "Addresses misunderstandings about Christ\u2019s return; encourages perseverance; clarifies timing. \uea0152\uea02",
+            "id": ["2TH"]
         },
         {
             "name": "1 Timothy",
             "chapters": 6,
-            "description": "Paul gives guidance to Timothy on church leadership, dealing with false teaching, and godly conduct. \uea0153\uea02"
+            "description": "Paul gives guidance to Timothy on church leadership, dealing with false teaching, and godly conduct. \uea0153\uea02",
+            "id": ["1TI"]
         },
         {
             "name": "2 Timothy",
             "chapters": 4,
-            "description": "Paul\u2019s final letter; exhortation to remain faithful, endure suffering, storing up treasure in heaven. \uea0154\uea02"
+            "description": "Paul\u2019s final letter; exhortation to remain faithful, endure suffering, storing up treasure in heaven. \uea0154\uea02",
+            "id": ["2TI"]
         },
         {
             "name": "Titus",
             "chapters": 3,
-            "description": "Instructions for organizing churches, teaching sound doctrine, good works. \uea0155\uea02"
+            "description": "Instructions for organizing churches, teaching sound doctrine, good works. \uea0155\uea02",
+            "id": ["TIT"]
         },
         {
             "name": "Philemon",
             "chapters": 1,
-            "description": "Personal appeal from Paul to Philemon to receive back his runaway slave Onesimus as a brother in Christ. \uea0156\uea02"
+            "description": "Personal appeal from Paul to Philemon to receive back his runaway slave Onesimus as a brother in Christ. \uea0156\uea02",
+            "id": ["PHM"]
         },
         {
             "name": "Hebrews",
             "chapters": 13,
-            "description": "Anonymous letter encouraging Jewish Christians; shows the superiority of Christ, fulfillment of the old covenant; perseverance in faith. \uea0157\uea02"
+            "description": "Anonymous letter encouraging Jewish Christians; shows the superiority of Christ, fulfillment of the old covenant; perseverance in faith. \uea0157\uea02",
+            "id": ["HEB"]
         },
         {
             "name": "James",
             "chapters": 5,
-            "description": "Faith and works, practical Christian living; emphasis on righteous behavior, patience, and controlling the tongue. \uea0158\uea02"
+            "description": "Faith and works, practical Christian living; emphasis on righteous behavior, patience, and controlling the tongue. \uea0158\uea02",
+            "id": ["JAS"]
         },
         {
             "name": "1 Peter",
             "chapters": 5,
-            "description": "Encouragement in suffering, hope in Christ, call to holiness and love within the Christian community. \uea0159\uea02"
+            "description": "Encouragement in suffering, hope in Christ, call to holiness and love within the Christian community. \uea0159\uea02",
+            "id": ["1PE"]
         },
         {
             "name": "2 Peter",
             "chapters": 3,
-            "description": "Warnings against false teachers; reminders of Christ\u2019s return; emphasize knowledge and godly living. \uea0160\uea02"
+            "description": "Warnings against false teachers; reminders of Christ\u2019s return; emphasize knowledge and godly living. \uea0160\uea02",
+            "id": ["2PE"]
         },
         {
             "name": "1 John",
             "chapters": 5,
-            "description": "Themes of love, truth, fellowship; tests of genuine faith; Christ\u2019s incarnation and victory over evil. \uea0161\uea02"
+            "description": "Themes of love, truth, fellowship; tests of genuine faith; Christ\u2019s incarnation and victory over evil. \uea0161\uea02",
+            "id": ["1JHN"]
         },
         {
             "name": "2 John",
             "chapters": 1,
-            "description": "Short letter about walking in truth, love, and obedience; warning against false teaching. \uea0162\uea02"
+            "description": "Short letter about walking in truth, love, and obedience; warning against false teaching. \uea0162\uea02",
+            "id": ["2JHN"]
         },
         {
             "name": "3 John",
             "chapters": 1,
-            "description": "Personal letter emphasizing hospitality, faithfulness; contrasts good and bad leadership. \uea0163\uea02"
+            "description": "Personal letter emphasizing hospitality, faithfulness; contrasts good and bad leadership. \uea0163\uea02",
+            "id": ["3JHN"]
         },
         {
             "name": "Jude",
             "chapters": 1,
-            "description": "Letter warning against false teachers, calling believers to contend for the faith, emphasizing mercy and judgement. \uea0164\uea02"
+            "description": "Letter warning against false teachers, calling believers to contend for the faith, emphasizing mercy and judgement. \uea0164\uea02",
+            "id": ["JUD"]
         },
         {
             "name": "Revelation",
             "chapters": 22,
-            "description": "Visions, symbolic prophetic imagery about the end times; the final judgment; new heavens and new earth; encouragement for perseverance. \uea0165\uea02"
+            "description": "Visions, symbolic prophetic imagery about the end times; the final judgment; new heavens and new earth; encouragement for perseverance. \uea0165\uea02",
+            "id": ["REV"]
         }
     ],
     "VERSIONS": {
