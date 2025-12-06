@@ -26,9 +26,8 @@ def create_verse_table_if_not_exists(conn):
             text TEXT,
             chapter_no INTEGER,
             verse_no INTEGER,
-            book INTEGER,
-            favorite INTEGER DEFAULT 0,
-            FOREIGN KEY (chapter_no) REFERENCES chapters (chapter_no)
+            book TEXT,
+            favorite INTEGER DEFAULT 0
             );
             """
     )

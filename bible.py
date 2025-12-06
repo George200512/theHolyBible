@@ -284,45 +284,47 @@ class Compiler:
         RETURNS: None
         """
         
-        version = kwargs["VERSION"]
-        language = kwargs["LANGUAGE"]
-        book_id = kwargs["BOOK"]
-        chapter_id = kwargs["CHAPTER"]
-        bible_ids = utils.get_settings()["BIBLE_IDS"]
-        id_key = f"{version}_{language}"
-        if id_key in bible_ids.keys():
-            bible_id = bible_ids[id_key]
-            chapter_id = f"{book_id}.{chapter_id}"
-            headers = {
-            "api-key": API_KEY,
-            "accept":"application/json"
-            }
-            
-            try:
-                response = rq.get(
-                    f"{URL}/{bible_id}/chapters/{chapter_id}",
-                    headers=headers
-                )
-                html_content = response.json()["data"]["content"]
-                soup = BeautifulSoup(html_content, "html.parser")
-                verse_list = []
-                for paragraph in soup.select("p.p"):
-                    for v in paragraph.select("span.v"):
-                        verse = []
-                        verse.append(conn)
-                        verse.append(v. next_sibling.strip())
-                        verse.append(kwargs["CHAPTER"])
-                        verse.append(book_id)
-                        verse.append(v.get("data-number")) 
-                        verse_list.append(verse)
-                map(
-                    lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
-                    verse_list
-                )
-            except (HTTPError, ConnectionError, Timeout) as e:
-                raise NonBiblicalError(e)
-        else:
-            raise KeyError("Version or language not found")    
+        lock = threading.Lock()
+        with lock:
+            version = kwargs["VERSION"]
+            language = kwargs["LANGUAGE"]
+            book_id = kwargs["BOOK"]
+            chapter_id = kwargs["CHAPTER"]
+            bible_ids = utils.get_settings()["BIBLE_IDS"]
+            id_key = f"{version}_{language}"
+            if id_key in bible_ids.keys():
+                bible_id = bible_ids[id_key]
+                chapter_id = f"{book_id}.{chapter_id}"
+                headers = {
+                "api-key": API_KEY,
+                "accept":"application/json"
+                }
+                
+                try:
+                    response = rq.get(
+                        f"{URL}/{bible_id}/chapters/{chapter_id}",
+                        headers=headers
+                    )
+                    html_content = response.json()["data"]["content"]
+                    soup = BeautifulSoup(html_content, "html.parser")
+                    verse_list = []
+                    for paragraph in soup.select("p.p"):
+                        for v in paragraph.select("span.v"):
+                            verse = []
+                            verse.append(conn)
+                            verse.append(v. next_sibling.strip())
+                            verse.append(kwargs["CHAPTER"])
+                            verse.append(book_id)
+                            verse.append(v.get("data-number")) 
+                            verse_list.append(verse)
+                    map(
+                        lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
+                        verse_list
+                    )
+                except (HTTPError, ConnectionError, Timeout) as e:
+                    raise NonBiblicalError(e)
+            else:
+                raise KeyError("Version or language not found")    
             
     def compile_book(self, conn, **kwargs):
         """
@@ -373,7 +375,138 @@ class Compiler:
             path = f"DATABASES/{name}/{name}.db"
             connection = sqlite3.connect(path, check_same_thread=False)
         book_ids = []
-        books = get_settings()["BOOKS"]
+        books = utils.get_settings()["BOOKS"]
         for book in books:
             book_ids.append(book["id"][0])
+        parameters= []
+        for book_id in book_ids:
+            parameter = {}
+            parameter["BOOK_ID"] = book_id
+            parameter["VERSION"] = version 
+            parameter["LANGUAGE"] = language 
+            parameters.append(parameter)
+        with ThreadPoolExecutor(max_workers=len(book_ids)) as executor:
+            executor.map(
+            lambda parameter:self.compile_book(connection, **parameter),
+            parameters 
+            )
+            
+    def update_chapter(self, conn, **kwargs):
+        """
+        Get and update the verses of a chapter of a book and then arrange it in the database.
+        conn: an instance of the the sqlite3 connection
+        **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
+        RETURNS: None
+        """
+        
+        lock = threading.Lock()
+        with lock:
+            version = kwargs["VERSION"]
+            language = kwargs["LANGUAGE"]
+            book_id = kwargs["BOOK"]
+            chapter_id = kwargs["CHAPTER"]
+            bible_ids = utils.get_settings()["BIBLE_IDS"]
+            id_key = f"{version}_{language}"
+            if id_key in bible_ids.keys():
+                bible_id = bible_ids[id_key]
+                chapter_id = f"{book_id}.{chapter_id}"
+                headers = {
+                "api-key": API_KEY,
+                "accept":"application/json"
+                }
+                
+                try:
+                    response = rq.get(
+                        f"{URL}/{bible_id}/chapters/{chapter_id}",
+                        headers=headers
+                    )
+                    html_content = response.json()["data"]["content"]
+                    soup = BeautifulSoup(html_content, "html.parser")
+                    verse_list = []
+                    for paragraph in soup.select("p.p"):
+                        for v in paragraph.select("span.v"):
+                            verse = []
+                            verse.append(v. next_sibling.strip())
+                            verse.append(kwargs["CHAPTER"])
+                            verse.append(book_id)
+                            verse.append(v.get("data-number"))
+                            verse = tuple(verse) 
+                            verse_list.append(verse)
+                    map(
+                        lambda verse: conn.execute(
+                        f"""
+                        UPDATE verses SET text={verse[0]} WHERE book={verse[2]} AND chapter_no={verse[1]} AND verse_no={verse[3]}
+                        """
+                        ),
+                        verse_list
+                    )
+                except (HTTPError, ConnectionError, Timeout) as e:
+                    raise NonBiblicalError(e)
+            else:
+                raise KeyError("Version or language not found")    
+            
+    def update_book(self, conn, **kwargs):
+        """
+        Get and update all chapters of a book and place them in the database.
+        conn: an instance of the sqlite3 connection 
+        kwargs: a dictionary containing the version, language and book id
+        RETURNS: None
+        """
+        
+        version = kwargs["VERSION"]
+        language= kwargs["LANGUAGE"]
+        book_id = kwargs["BOOK_ID"]
+        books = utils.get_settings()["BOOKS"]
+        chapter_no = None
+        for book in books:        
+            if book["id"][0] == book_id:
+                chapter_no = book["chapters"]
+                break
+                    
+        parameters = []
+        for chapter in range(1, chapter_no + 1):
+            parameter = {}
+            parameter["VERSION"] = version 
+            parameter["LANGUAGE"] = language 
+            parameter["BOOK"] = book_id
+            parameter["CHAPTER"] = chapter
+            parameters.append(parameter)
+                
+        with ThreadPoolExecutor(max_workers=chapter_no) as executor:
+            executor.map(
+            lambda parameter: self.compile_chapter(conn, **parameter),
+                parameters 
+                )
+                
+    def compile_bible(self, version, language, name=None):
+        """
+        Compile the whole bible by compile individual books.
+        version: a string representing version of bible. eg.NKJV
+        language: a string representing language of bible. eg.en(English),
+        name: a string representing the name of the bible. defaults:None
+        RETURNS:None
+        """
+        connection = None
+        if name is None:
+            path = f"DATABASES/{version}_{language}/{version}_{language}.db"
+            connection = sqlite3.connect(path, check_same_thread=False)
+        else:
+            path = f"DATABASES/{name}/{name}.db"
+            connection = sqlite3.connect(path, check_same_thread=False)
+        book_ids = []
+        books = utils.get_settings()["BOOKS"]
+        for book in books:
+            book_ids.append(book["id"][0])
+        parameters= []
+        for book_id in book_ids:
+            parameter = {}
+            parameter["BOOK_ID"] = book_id
+            parameter["VERSION"] = version 
+            parameter["LANGUAGE"] = language 
+            parameters.append(parameter)
+        with ThreadPoolExecutor(max_workers=len(book_ids)) as executor:
+            executor.map(
+            lambda parameter:self.compile_book(connection, **parameter),
+            parameters 
+            )
         

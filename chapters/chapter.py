@@ -1,9 +1,9 @@
 # Author: Ofori George
 # Commencement Date: Tuesday 26 August, 2025.
-# Telephone / WhatsApp: (+233)04694485
+# Telephone / WhatsApp: (+233)504694485
 # Facebook: Street Python
 # Email: georgeofori2005@gmail.com
-# website: not ready yet
+# website: https://george-ofori.vercel.app
 # github: https://www.github.com/George200512/
 
 import pathlib
