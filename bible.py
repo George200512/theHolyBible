@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import threading
+from datetime import datetime 
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -390,6 +391,18 @@ class Compiler:
             lambda parameter:self.compile_book(connection, **parameter),
             parameters 
             )
+        bible = {}
+        bible["path"] = path
+        bible["version"] = version 
+        bible["language"] = language 
+        bible["lastUpdated"] = datetime.now()
+        if name is not None:
+            bible["name"] = name
+        else:
+            bible["name"] = path
+        databases = utils.get_settings()["DATABASES"]
+        databases.append(bible)
+        utils.set_settings("DATABASES", databases)
             
     def update_chapter(self, conn, **kwargs):
         """
@@ -478,21 +491,30 @@ class Compiler:
                 parameters 
                 )
                 
-    def compile_bible(self, version, language, name=None):
+    def update_bible(self, name="DEFAULT"):
         """
-        Compile the whole bible by compile individual books.
-        version: a string representing version of bible. eg.NKJV
-        language: a string representing language of bible. eg.en(English),
-        name: a string representing the name of the bible. defaults:None
+        Update the whole bible by replacing new verses from bible api.
+        name: a string representing the name of the bible. defaults:DEFAULT
         RETURNS:None
         """
-        connection = None
-        if name is None:
-            path = f"DATABASES/{version}_{language}/{version}_{language}.db"
+        connection, version, language = None, None, None
+        if name == "DEFAULT":
+            path = f"DATABASES/{name}/{name}.db"
             connection = sqlite3.connect(path, check_same_thread=False)
         else:
             path = f"DATABASES/{name}/{name}.db"
-            connection = sqlite3.connect(path, check_same_thread=False)
+            if os.path.exists(path):
+                connection = sqlite3.connect(path, check_same_thread=False)
+                databases = utils.get_settings()["DATABASES"]
+                bible = list(
+                filter(
+                lambda bible:bible["path"] == path
+                ),
+                databases 
+                )[0]
+                print(bible)
+                language = bible["language"]
+                version = bible["version"]
         book_ids = []
         books = utils.get_settings()["BOOKS"]
         for book in books:
@@ -506,7 +528,7 @@ class Compiler:
             parameters.append(parameter)
         with ThreadPoolExecutor(max_workers=len(book_ids)) as executor:
             executor.map(
-            lambda parameter:self.compile_book(connection, **parameter),
+            lambda parameter:self.update_book(connection, **parameter),
             parameters 
             )
         
