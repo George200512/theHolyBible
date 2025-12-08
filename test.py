@@ -12,6 +12,7 @@ A script that handles testing of the bible class and the compiler class.
 
 import unittest
 from unittest.mock import patch, MagicMock
+from datetime import datetime 
 
 from bible import Compiler, Bible
 
@@ -133,8 +134,9 @@ class TestCompiler(unittest.TestCase):
                  "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
                  })      
 
-    @patch("sqlite3.connect")                    
-    def test_update_bible(self, mock_connect):
+    @patch("sqlite3.connect")  
+    @patch("os.path.exists", return_value=True)                  
+    def test_update_bible(self, mock_path_exists, mock_connect):
          """
          Test whether the update_bible method compiles the bible into the database 
          """
@@ -142,7 +144,15 @@ class TestCompiler(unittest.TestCase):
          with patch.object(Compiler, "__init__", lambda self:None):
              with patch.object(Compiler, "update_book", lambda self:None):
                  with patch("utils.get_settings", return_value={
-                 "DATABASES":[],
+                 "DATABASES":[
+                 {
+                 "path": "DATABASES/DEFAULT/DEFAULT.db",
+                 "name": "DEFAULT",
+                 "version": "KJV",
+                 "language": "en",
+                 "lastUpdated": f"{datetime.now()}" 
+                  }
+                 ],
                  "BOOKS":[{
             "name": "Genesis",
             "chapters": 50,

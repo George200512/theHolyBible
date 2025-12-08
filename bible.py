@@ -246,6 +246,8 @@ class Compiler:
     A compiler class is responsible for getting the bible with the specified version and language
     from the internet and create a new database for a new bible version or update the existing one.
     """
+    
+    _lock = threading.Lock()
 
     def __init__(self):
         """A method that is called immediately an object of the class is created"""
@@ -285,8 +287,7 @@ class Compiler:
         RETURNS: None
         """
         
-        lock = threading.Lock()
-        with lock:
+        with Compiler._lock:
             version = kwargs["VERSION"]
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
@@ -318,10 +319,10 @@ class Compiler:
                             verse.append(book_id)
                             verse.append(v.get("data-number")) 
                             verse_list.append(verse)
-                    map(
+                    list(map(
                         lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
                         verse_list
-                    )
+                    ))
                 except (HTTPError, ConnectionError, Timeout) as e:
                     raise NonBiblicalError(e)
             else:
@@ -354,7 +355,7 @@ class Compiler:
             parameter["CHAPTER"] = chapter
             parameters.append(parameter)
                 
-        with ThreadPoolExecutor(max_workers=chapter_no) as executor:
+        with ThreadPoolExecutor(max_workers=min(chapter_no, 10)) as executor:
             executor.map(
             lambda parameter: self.compile_chapter(conn, **parameter),
                 parameters 
@@ -386,7 +387,7 @@ class Compiler:
             parameter["VERSION"] = version 
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
-        with ThreadPoolExecutor(max_workers=len(book_ids)) as executor:
+        with ThreadPoolExecutor(max_workers=min(len(book_ids), 10)) as executor:
             executor.map(
             lambda parameter:self.compile_book(connection, **parameter),
             parameters 
@@ -412,8 +413,7 @@ class Compiler:
         RETURNS: None
         """
         
-        lock = threading.Lock()
-        with lock:
+        with Compiler._lock:
             version = kwargs["VERSION"]
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
@@ -445,14 +445,14 @@ class Compiler:
                             verse.append(v.get("data-number"))
                             verse = tuple(verse) 
                             verse_list.append(verse)
-                    map(
+                    list(map(
                         lambda verse: conn.execute(
                         f"""
                         UPDATE verses SET text={verse[0]} WHERE book={verse[2]} AND chapter_no={verse[1]} AND verse_no={verse[3]}
                         """
                         ),
                         verse_list
-                    )
+                    ))
                 except (HTTPError, ConnectionError, Timeout) as e:
                     raise NonBiblicalError(e)
             else:
@@ -485,7 +485,7 @@ class Compiler:
             parameter["CHAPTER"] = chapter
             parameters.append(parameter)
                 
-        with ThreadPoolExecutor(max_workers=chapter_no) as executor:
+        with ThreadPoolExecutor(max_workers=min(chapter_no, 10)) as executor:
             executor.map(
             lambda parameter: self.compile_chapter(conn, **parameter),
                 parameters 
@@ -497,24 +497,27 @@ class Compiler:
         name: a string representing the name of the bible. defaults:DEFAULT
         RETURNS:None
         """
-        connection, version, language = None, None, None
+        connection, version, language, bible = None, None, None, None
         if name == "DEFAULT":
             path = f"DATABASES/{name}/{name}.db"
             connection = sqlite3.connect(path, check_same_thread=False)
         else:
             path = f"DATABASES/{name}/{name}.db"
-            if os.path.exists(path):
-                connection = sqlite3.connect(path, check_same_thread=False)
-                databases = utils.get_settings()["DATABASES"]
-                bible = list(
-                filter(
-                lambda bible:bible["path"] == path
-                ),
-                databases 
-                )[0]
-                print(bible)
+        if os.path.exists(path):
+            connection = sqlite3.connect(path, check_same_thread=False)
+            databases = utils.get_settings()["DATABASES"]
+            bible = list(
+            filter(
+            lambda bible:bible["path"] == path,
+            databases 
+            )
+            )
+            if bible:
+                bible = bible[0]
                 language = bible["language"]
                 version = bible["version"]
+            else:
+                raise ValueError("Name not found in database")
         book_ids = []
         books = utils.get_settings()["BOOKS"]
         for book in books:
@@ -526,9 +529,11 @@ class Compiler:
             parameter["VERSION"] = version 
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
-        with ThreadPoolExecutor(max_workers=len(book_ids)) as executor:
+        with ThreadPoolExecutor(max_workers=min(len(book_ids), 10)) as executor:
             executor.map(
             lambda parameter:self.update_book(connection, **parameter),
             parameters 
             )
+            
+        
         

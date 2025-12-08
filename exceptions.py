@@ -3,7 +3,7 @@
 # Telephone / WhatsApp: (+233)504694485
 # Facebook: Street Python
 # Email: georgeofori2005@gmail.com
-# website: not ready yet
+# website: https://george-ofori.vercel.app
 # github: https://www.github.com/George200512/
 
 """A script to define the exception classes for the bible class"""
