@@ -279,15 +279,16 @@ class Compiler:
                 utils.set_settings("VERSIONS", versions)
                 utils.set_settings("BIBLE_IDS", bible_ids)
 
-    def compile_chapter(self, conn, **kwargs):
+    def compile_chapter(self, path, **kwargs):
         """
         Get the verses of a chapter of a book and then arrange it in the database.
-        conn: an instance of the the sqlite3 connection
+        path: path where your bible database will be located
         **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
         RETURNS: None
         """
         
         with Compiler._lock:
+            conn = sqlite3.connect(path)
             version = kwargs["VERSION"]
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
@@ -328,10 +329,10 @@ class Compiler:
             else:
                 raise KeyError("Version or language not found")    
             
-    def compile_book(self, conn, **kwargs):
+    def compile_book(self, path, **kwargs):
         """
         Get all chapters of a book and place them in the database.
-        conn: an instance of the sqlite3 connection 
+        path: path where the bible database will be located 
         kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
@@ -357,7 +358,7 @@ class Compiler:
                 
         with ThreadPoolExecutor(max_workers=min(chapter_no, 10)) as executor:
             executor.map(
-            lambda parameter: self.compile_chapter(conn, **parameter),
+            lambda parameter: self.compile_chapter(path, **parameter),
                 parameters 
                 )
                 
@@ -375,7 +376,6 @@ class Compiler:
             connection = sqlite3.connect(path, check_same_thread=False)
         else:
             path = f"DATABASES/{name}/{name}.db"
-            connection = sqlite3.connect(path, check_same_thread=False)
         book_ids = []
         books = utils.get_settings()["BOOKS"]
         for book in books:
@@ -389,7 +389,7 @@ class Compiler:
             parameters.append(parameter)
         with ThreadPoolExecutor(max_workers=min(len(book_ids), 10)) as executor:
             executor.map(
-            lambda parameter:self.compile_book(connection, **parameter),
+            lambda parameter:self.compile_book(path, **parameter),
             parameters 
             )
         bible = {}
@@ -405,15 +405,16 @@ class Compiler:
         databases.append(bible)
         utils.set_settings("DATABASES", databases)
             
-    def update_chapter(self, conn, **kwargs):
+    def update_chapter(self, path, **kwargs):
         """
         Get and update the verses of a chapter of a book and then arrange it in the database.
-        conn: an instance of the the sqlite3 connection
+        path: path to the existing bible database 
         **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
         RETURNS: None
         """
         
         with Compiler._lock:
+            conn = sqlite3.connect(path)
             version = kwargs["VERSION"]
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
@@ -448,20 +449,21 @@ class Compiler:
                     list(map(
                         lambda verse: conn.execute(
                         f"""
-                        UPDATE verses SET text={verse[0]} WHERE book={verse[2]} AND chapter_no={verse[1]} AND verse_no={verse[3]}
-                        """
+                        UPDATE verses SET text=? WHERE book=? AND chapter_no=? AND verse_no=?
+                        """, (verse[0], verse[2], verse[1], verse[3])
                         ),
                         verse_list
                     ))
+                    conn.close()
                 except (HTTPError, ConnectionError, Timeout) as e:
                     raise NonBiblicalError(e)
             else:
                 raise KeyError("Version or language not found")    
             
-    def update_book(self, conn, **kwargs):
+    def update_book(self, path, **kwargs):
         """
         Get and update all chapters of a book and place them in the database.
-        conn: an instance of the sqlite3 connection 
+        path: path to the existing bible database
         kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
@@ -487,7 +489,7 @@ class Compiler:
                 
         with ThreadPoolExecutor(max_workers=min(chapter_no, 10)) as executor:
             executor.map(
-            lambda parameter: self.compile_chapter(conn, **parameter),
+            lambda parameter: self.update_chapter(path, **parameter),
                 parameters 
                 )
                 
@@ -497,14 +499,14 @@ class Compiler:
         name: a string representing the name of the bible. defaults:DEFAULT
         RETURNS:None
         """
-        connection, version, language, bible = None, None, None, None
+        version, language, bible = None, None, None
         if name == "DEFAULT":
             path = f"DATABASES/{name}/{name}.db"
-            connection = sqlite3.connect(path, check_same_thread=False)
+            connection = sqlite3.connect(path) 
         else:
             path = f"DATABASES/{name}/{name}.db"
         if os.path.exists(path):
-            connection = sqlite3.connect(path, check_same_thread=False)
+            connection = sqlite3.connect(path)
             databases = utils.get_settings()["DATABASES"]
             bible = list(
             filter(

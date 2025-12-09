@@ -52,7 +52,8 @@ class TestCompiler(unittest.TestCase):
         self.assertEqual(compiler.data[0]["id"], "1234abcd5678efgh9012ijkl")
 
     @patch.object(Compiler, "__init__", lambda self: None)
-    def test_compile_chapter(self):
+    @patch("sqlite3.connect")
+    def test_compile_chapter(self, mock_connect):
         """
         Test whether the method compiles the chapters into the database.
         """
@@ -71,8 +72,8 @@ class TestCompiler(unittest.TestCase):
               "bible.rq.get",
                 return_value=mock_response,
             ):
-                mock_conn = MagicMock()
-                compiler.compile_chapter(mock_conn, **kwargs)
+                mock_connect.return_value = MagicMock()
+                compiler.compile_chapter("DATABASES/good-news/good-news.db", **kwargs)
                 
     def test_compile_book(self):
          """
@@ -82,7 +83,7 @@ class TestCompiler(unittest.TestCase):
          with patch.object(Compiler, "__init__", lambda self: None):
              with patch.object(Compiler, "compile_chapter", lambda self: None):
                  compiler = Compiler()
-                 compiler.compile_book(MagicMock(), **{
+                 compiler.compile_book("DATABASES/good-news/good-news.db", **{
                  "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
                  })
      
@@ -100,7 +101,8 @@ class TestCompiler(unittest.TestCase):
                      Compiler().compile_bible(language=language, version=version)       
     
     @patch.object(Compiler, "__init__", lambda self: None)
-    def test_update_chapter(self):
+    @patch("sqlite3.connect")
+    def test_update_chapter(self, mock_connect):
         """
         Test whether the method updates the chapters into the database.
         """
@@ -119,8 +121,8 @@ class TestCompiler(unittest.TestCase):
               "bible.rq.get",
                 return_value=mock_response,
             ):
-                mock_conn = MagicMock()
-                compiler.update_chapter(mock_conn, **kwargs)
+                mock_connect.return_value = MagicMock()
+                compiler.update_chapter("DATABASES/good-news/good-news.db", **kwargs)
   
     def test_update_book(self):
          """
@@ -130,7 +132,7 @@ class TestCompiler(unittest.TestCase):
          with patch.object(Compiler, "__init__", lambda self: None):
              with patch.object(Compiler, "update_chapter", lambda self: None):
                  compiler = Compiler()
-                 compiler.update_book(MagicMock(), **{
+                 compiler.update_book("DATABASES/good-news/good-news.db", **{
                  "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
                  })      
 
