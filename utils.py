@@ -12,8 +12,10 @@ A script that contains the frequently used functions for easy accessibility
 
 import json
 from pathlib import Path
+import threading 
 
 SETTINGS_PATH = Path(__file__).parent / "settings.json"
+lock = threading.Lock()
 
 def create_verse_table_if_not_exists(conn):
     """Create the verse table in the database if it is not present"""
@@ -36,11 +38,11 @@ def create_verse_table_if_not_exists(conn):
 # Get content of the settings.json file
 def get_settings():
     """Retrieve the content of the settings.json file and it is a dictionary"""
+    with lock:
+        with open(SETTINGS_PATH, mode="r", encoding="utf-8") as file:
+            data = json.load(file)
+            return data.copy()
     
-    with open(SETTINGS_PATH, mode="r", encoding="utf-8") as file:
-        data = json.load(file)
-        return data
-
 # Define a function to get the book name based on the number of the book                
 def get_book(number):
   """Return the name of the book of the bible based on the number
@@ -58,7 +60,7 @@ def version(name:str)->str:
      RETURN:string
      """
      
-     bible = get_settings()[" DATABASES"].get(name)
+     bible = get_settings()["DATABASES"].get(name)
      if bible is None:
          raise ValueError("Name not found in database")
      return bible["version"]
@@ -70,7 +72,7 @@ def language(name:str)->str:
      RETURN:string
      """
      
-     bible = get_settings()[" DATABASES"].get(name)
+     bible = get_settings()["DATABASES"].get(name)
      if bible is None:
          raise ValueError("Name not found in database")
      return bible["language"]
@@ -84,11 +86,12 @@ def set_settings(key, value):
        RETURNS: None.
        """
        
-       settings = get_settings()
-       with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
-           settings[key] = value
-           json.dump(settings, file, indent=4)
-               
+       with lock:      
+           settings = get_settings() 
+           with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
+               settings[key] = value
+               json.dump(settings, file, indent=4)
+                   
        
 if __name__ == "__main__":
     pass

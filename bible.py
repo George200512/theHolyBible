@@ -256,7 +256,7 @@ class Compiler:
         bible_ids = {}
         if utils.get_settings().get("VERSIONS") is None:
             try:
-                self.response = rq.get(URL, headers={"api-key": API_KEY}, timeout=3.7)
+                self.response = rq.get(URL, headers={"api-key": API_KEY}, timeout=12)
             except (HTTPError, ConnectionError, Timeout) as e:
                 raise bexc.NonBiblicalError(e)
             else:
@@ -282,18 +282,18 @@ class Compiler:
     def compile_chapter(self, path, **kwargs):
         """
         Get the verses of a chapter of a book and then arrange it in the database.
-        path: path where your bible database will be located
+        path: the path to the bible database 
         **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
         RETURNS: None
         """
-        
+        print(" Chapter")
         with Compiler._lock:
             conn = sqlite3.connect(path)
             version = kwargs["VERSION"]
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
             chapter_id = kwargs["CHAPTER"]
-            bible_ids = utils.get_settings()["BIBLE_IDS"]
+            bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
             id_key = f"{version}_{language}"
             if id_key in bible_ids.keys():
                 bible_id = bible_ids[id_key]
@@ -306,9 +306,11 @@ class Compiler:
                 try:
                     response = rq.get(
                         f"{URL}/{bible_id}/chapters/{chapter_id}",
-                        headers=headers
+                        headers=headers, timeout=None
                     )
+                    print("Connected")
                     html_content = response.json()["data"]["content"]
+                    print(html_content)
                     soup = BeautifulSoup(html_content, "html.parser")
                     verse_list = []
                     for paragraph in soup.select("p.p"):
@@ -320,10 +322,12 @@ class Compiler:
                             verse.append(book_id)
                             verse.append(v.get("data-number")) 
                             verse_list.append(verse)
-                    list(map(
-                        lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
-                        verse_list
-                    ))
+                    with conn:
+                        list(map(
+                            lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
+                            verse_list
+                        ))
+                    conn.close()
                 except (HTTPError, ConnectionError, Timeout) as e:
                     raise NonBiblicalError(e)
             else:
@@ -332,15 +336,15 @@ class Compiler:
     def compile_book(self, path, **kwargs):
         """
         Get all chapters of a book and place them in the database.
-        path: path where the bible database will be located 
+        path: the path to the bible database.
         kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
-        
+        print("book")
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]
-        books = utils.get_settings()["BOOKS"]
+        books = utils.get_settings().copy()["BOOKS"]
         chapter_no = None
         for book in books:        
             if book["id"][0] == book_id:
@@ -370,14 +374,13 @@ class Compiler:
         name: a string representing the name of the bible. defaults:None
         RETURNS:None
         """
-        connection = None
+        print("Started ")
         if name is None:
             path = f"DATABASES/{version}_{language}/{version}_{language}.db"
-            connection = sqlite3.connect(path, check_same_thread=False)
         else:
             path = f"DATABASES/{name}/{name}.db"
         book_ids = []
-        books = utils.get_settings()["BOOKS"]
+        books = utils.get_settings().copy()["BOOKS"]
         for book in books:
             book_ids.append(book["id"][0])
         parameters= []
@@ -408,7 +411,7 @@ class Compiler:
     def update_chapter(self, path, **kwargs):
         """
         Get and update the verses of a chapter of a book and then arrange it in the database.
-        path: path to the existing bible database 
+        path: the path to a existing bible database.
         **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
         RETURNS: None
         """
@@ -419,7 +422,7 @@ class Compiler:
             language = kwargs["LANGUAGE"]
             book_id = kwargs["BOOK"]
             chapter_id = kwargs["CHAPTER"]
-            bible_ids = utils.get_settings()["BIBLE_IDS"]
+            bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
             id_key = f"{version}_{language}"
             if id_key in bible_ids.keys():
                 bible_id = bible_ids[id_key]
@@ -463,7 +466,7 @@ class Compiler:
     def update_book(self, path, **kwargs):
         """
         Get and update all chapters of a book and place them in the database.
-        path: path to the existing bible database
+        path: path to an existing bible database.
         kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
@@ -471,7 +474,7 @@ class Compiler:
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]
-        books = utils.get_settings()["BOOKS"]
+        books = utils.get_settings().copy()["BOOKS"]
         chapter_no = None
         for book in books:        
             if book["id"][0] == book_id:
@@ -502,11 +505,9 @@ class Compiler:
         version, language, bible = None, None, None
         if name == "DEFAULT":
             path = f"DATABASES/{name}/{name}.db"
-            connection = sqlite3.connect(path) 
         else:
             path = f"DATABASES/{name}/{name}.db"
         if os.path.exists(path):
-            connection = sqlite3.connect(path)
             databases = utils.get_settings()["DATABASES"]
             bible = list(
             filter(
@@ -521,7 +522,7 @@ class Compiler:
             else:
                 raise ValueError("Name not found in database")
         book_ids = []
-        books = utils.get_settings()["BOOKS"]
+        books = utils.get_settings().copy()["BOOKS"]
         for book in books:
             book_ids.append(book["id"][0])
         parameters= []
@@ -533,9 +534,9 @@ class Compiler:
             parameters.append(parameter)
         with ThreadPoolExecutor(max_workers=min(len(book_ids), 10)) as executor:
             executor.map(
-            lambda parameter:self.update_book(connection, **parameter),
+            lambda parameter:self.update_book(path, **parameter),
             parameters 
             )
             
-        
+Compiler().compile_bible(language="en", version="KJV") 
         
