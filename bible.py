@@ -21,6 +21,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import threading
 from datetime import datetime 
+from pathlib import Path
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -256,7 +257,7 @@ class Compiler:
         bible_ids = {}
         if utils.get_settings().get("VERSIONS") is None:
             try:
-                self.response = rq.get(URL, headers={"api-key": API_KEY}, timeout=12)
+                self.response = rq.get(URL, headers={"api-key": API_KEY}, timeout=(6.3, 30))
             except (HTTPError, ConnectionError, Timeout) as e:
                 raise bexc.NonBiblicalError(e)
             else:
@@ -287,51 +288,60 @@ class Compiler:
         RETURNS: None
         """
         print(" Chapter")
-        with Compiler._lock:
-            conn = sqlite3.connect(path)
-            version = kwargs["VERSION"]
-            language = kwargs["LANGUAGE"]
-            book_id = kwargs["BOOK"]
-            chapter_id = kwargs["CHAPTER"]
-            bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
-            id_key = f"{version}_{language}"
-            if id_key in bible_ids.keys():
-                bible_id = bible_ids[id_key]
-                chapter_id = f"{book_id}.{chapter_id}"
-                headers = {
-                "api-key": API_KEY,
-                "accept":"application/json"
-                }
+        conn = sqlite3.connect(path)
+        utils.create_verse_table_if_not_exists(conn)
+        version = kwargs["VERSION"]
+        language = kwargs["LANGUAGE"]
+        book_id = kwargs["BOOK"]
+        chapter_id = kwargs["CHAPTER"]
+        bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
+        id_key = f"{version}_{language}"
+        if id_key in bible_ids.keys():
+            bible_id = bible_ids[id_key]
+            chapter_id = f"{book_id}.{chapter_id}"
+            headers = {
+            "api-key": API_KEY,
+            "accept":"application/json"
+             }
                 
-                try:
-                    response = rq.get(
-                        f"{URL}/{bible_id}/chapters/{chapter_id}",
-                        headers=headers, timeout=None
-                    )
-                    print("Connected")
-                    html_content = response.json()["data"]["content"]
-                    print(html_content)
-                    soup = BeautifulSoup(html_content, "html.parser")
-                    verse_list = []
-                    for paragraph in soup.select("p.p"):
-                        for v in paragraph.select("span.v"):
-                            verse = []
-                            verse.append(conn)
-                            verse.append(v. next_sibling.strip())
-                            verse.append(kwargs["CHAPTER"])
-                            verse.append(book_id)
-                            verse.append(v.get("data-number")) 
-                            verse_list.append(verse)
-                    with conn:
+            try:
+                print("get bible")
+                response = rq.get(
+                    f"{URL}/{bible_id}/chapters/{chapter_id}",
+                    headers=headers, timeout=(6.3, 30)
+                )
+                print("Connected")
+                html_content = response.json()["data"]["content"] 
+                soup = BeautifulSoup(html_content, "html.parser")
+                verse_list = []
+                text = ""
+                for paragraph in soup.select("p.p"):
+                    for v in paragraph.select("span.v"):
+                        verse = []
+                        verse.append(conn)
+                        if v.next_sibling:
+                            text = v.next_sibling.string
+                            if text is None:
+                                text = v.next_sibling.get_text(strip=True)
+                        verse.append(text)
+                        verse.append(kwargs["CHAPTER"])
+                        verse.append(book_id)
+                        verse.append(v.get("data-number")) 
+                        verse_list.append(verse)
+                with conn:
+                    with Compiler._lock:
+                        print("Locked")
                         list(map(
                             lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
                             verse_list
                         ))
-                    conn.close()
-                except (HTTPError, ConnectionError, Timeout) as e:
-                    raise NonBiblicalError(e)
-            else:
-                raise KeyError("Version or language not found")    
+                conn.close()
+            except (HTTPError, ConnectionError, Timeout) as e:
+                print('Error')
+                raise bexc.NonBiblicalError(e)
+        else:
+            print("Error 2")
+            raise KeyError("Version or language not found")    
             
     def compile_book(self, path, **kwargs):
         """
@@ -360,11 +370,11 @@ class Compiler:
             parameter["CHAPTER"] = chapter
             parameters.append(parameter)
                 
-        with ThreadPoolExecutor(max_workers=min(chapter_no, 10)) as executor:
-            executor.map(
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            list(executor.map(
             lambda parameter: self.compile_chapter(path, **parameter),
                 parameters 
-                )
+                ))
                 
     def compile_bible(self, version, language, name=None):
         """
@@ -375,10 +385,14 @@ class Compiler:
         RETURNS:None
         """
         print("Started ")
+        path = None
         if name is None:
             path = f"DATABASES/{version}_{language}/{version}_{language}.db"
         else:
             path = f"DATABASES/{name}/{name}.db"
+        folder_path = Path(path).parent
+        folder_path.mkdir(parents=True, exist_ok=True) 
+                   
         book_ids = []
         books = utils.get_settings().copy()["BOOKS"]
         for book in books:
@@ -390,11 +404,12 @@ class Compiler:
             parameter["VERSION"] = version 
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
-        with ThreadPoolExecutor(max_workers=min(len(book_ids), 10)) as executor:
-            executor.map(
+        
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            list(executor.map(
             lambda parameter:self.compile_book(path, **parameter),
             parameters 
-            )
+            ))
         bible = {}
         bible["path"] = path
         bible["version"] = version 
@@ -407,6 +422,7 @@ class Compiler:
         databases = utils.get_settings()["DATABASES"]
         databases.append(bible)
         utils.set_settings("DATABASES", databases)
+        print("Download complete..")
             
     def update_chapter(self, path, **kwargs):
         """
@@ -537,6 +553,7 @@ class Compiler:
             lambda parameter:self.update_book(path, **parameter),
             parameters 
             )
-            
-Compiler().compile_bible(language="en", version="KJV") 
+
+if __name__ == "__main__":       
+    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT") 
         
