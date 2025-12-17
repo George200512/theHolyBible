@@ -22,6 +22,7 @@ from concurrent.futures import ThreadPoolExecutor
 import threading
 from datetime import datetime 
 from pathlib import Path
+import time
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -279,6 +280,60 @@ class Compiler:
                     versions[item["id"]] = bible
                 utils.set_settings("VERSIONS", versions)
                 utils.set_settings("BIBLE_IDS", bible_ids)
+                
+    def download_bible(self, **kwargs):
+        """
+        Get the bible from the api.
+        **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible
+        RETURNS:A json object or false
+        """
+        
+        try:
+            version = kwargs["VERSION"]
+            language = kwargs["LANGUAGE"]
+            book_id = kwargs["BOOK"]
+            chapter_id = kwargs["CHAPTER"]
+            bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
+            id_key = f"{version}_{language}"
+            if id_key in bible_ids.keys():
+                bible_id = bible_ids[id_key]
+                chapter_id = f"{book_id}.{chapter_id}"
+                headers = {
+                "api-key": API_KEY,
+                "accept":"application/json"
+                 }
+                response = rq.get(
+                    f"{URL}/{bible_id}/chapters/{chapter_id}",
+                    headers=headers, timeout=(6.3, 30)
+                 )
+                 time.sleep(0.3)
+                return response.json()
+            else:
+                print("Error 2")
+                raise KeyError("Version or language not found")
+        except (HTTPError, ConnectionError, Timeout) :
+            return False
+            
+    def verse_exists(self, conn, book_id, chapter_num, verse_num):
+        """
+        Check if verse exists already in database.
+        conn(sqlite3 connection instance): a connection instance for connecting to the database 
+        book_id(str): book id of the verse. eg.GEN for Genesis 
+        chapter_num(int): the chapter number of the verse
+        verse_num(int): the verse number of the verse 
+        RETURN: True if verse exists else False
+        """
+        
+        cursor = conn.cursor()
+        cursor.execute(
+        """
+        SELECT text FROM verses WHERE book=? AND chapter_no=?
+        AND verse_no=?
+        """, (book_id, chapter_num, verse_num)
+        )
+        if cursor.fetchone():
+            return True
+        return False
 
     def compile_chapter(self, path, **kwargs):
         """
@@ -290,58 +345,42 @@ class Compiler:
         print(" Chapter")
         conn = sqlite3.connect(path)
         utils.create_verse_table_if_not_exists(conn)
-        version = kwargs["VERSION"]
-        language = kwargs["LANGUAGE"]
-        book_id = kwargs["BOOK"]
-        chapter_id = kwargs["CHAPTER"]
-        bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
-        id_key = f"{version}_{language}"
-        if id_key in bible_ids.keys():
-            bible_id = bible_ids[id_key]
-            chapter_id = f"{book_id}.{chapter_id}"
-            headers = {
-            "api-key": API_KEY,
-            "accept":"application/json"
-             }
+        attempts = 3
+        response = self.download_bible(**kwargs)
+        print(response)
+        while attempts > 0 and not response:
+            response = self.download_bible(**kwargs)
+            attempts -= 1
+            if not response and attempts == 0:
+                raise bexc.NonBiblicalError("Chapter failed to download after three attempts.")
                 
-            try:
-                print("get bible")
-                response = rq.get(
-                    f"{URL}/{bible_id}/chapters/{chapter_id}",
-                    headers=headers, timeout=(6.3, 30)
-                )
-                print("Connected")
-                html_content = response.json()["data"]["content"] 
-                soup = BeautifulSoup(html_content, "html.parser")
-                verse_list = []
-                text = ""
-                for paragraph in soup.select("p.p"):
-                    for v in paragraph.select("span.v"):
-                        verse = []
-                        verse.append(conn)
-                        if v.next_sibling:
-                            text = v.next_sibling.string
-                            if text is None:
-                                text = v.next_sibling.get_text(strip=True)
-                        verse.append(text)
-                        verse.append(kwargs["CHAPTER"])
-                        verse.append(book_id)
-                        verse.append(v.get("data-number")) 
-                        verse_list.append(verse)
-                with conn:
-                    with Compiler._lock:
-                        print("Locked")
-                        list(map(
-                            lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
-                            verse_list
-                        ))
-                conn.close()
-            except (HTTPError, ConnectionError, Timeout) as e:
-                print('Error')
-                raise bexc.NonBiblicalError(e)
-        else:
-            print("Error 2")
-            raise KeyError("Version or language not found")    
+        book_id = kwargs["BOOK"]
+        html_content = response["data"]["content"] 
+        soup = BeautifulSoup(html_content, "html.parser")
+        verse_list = []
+        text = ""
+        for paragraph in soup.select("p.p"):
+              for v in paragraph.select("span.v"):
+                    verse = []
+                    verse.append(conn)
+                    if v.next_sibling:
+                        text = v.next_sibling.string
+                        if text is None:
+                            text = v.next_sibling.get_text(strip=True)
+                    verse.append(text)
+                    verse.append(kwargs["CHAPTER"])
+                    verse.append(book_id)
+                    verse.append(v.get("data-number")) 
+                    verse_list.append(verse)
+        with conn:
+            with Compiler._lock:
+                print("Locked")
+                list(map(
+                    lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
+                    verse_list
+                ))
+        conn.close()
+            
             
     def compile_book(self, path, **kwargs):
         """
