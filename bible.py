@@ -57,7 +57,7 @@ class Bible(UserList):
         self.book_array = BookArray(
             [Book(self.connection, num) for num in range(1, self.no_of_books + 1)]
         )
-        super().__int__(self.book_array)
+        super().__init__(self.book_array)
 
     def close(self):
         """Close the database"""
@@ -95,7 +95,7 @@ class Bible(UserList):
         it should start from 1 not zero.Index or slice less than zero is an error"""
 
         if isinstance(index, int):
-            if (index < 1) or index > (len(self.verse_array)):
+            if (index < 1) or index > (len(self.book_array)):
                 raise exc.BookNotFoundError("Book number not found")
             return self.book_array[index - 1]
         elif isinstance(index, slice):
@@ -168,7 +168,7 @@ class Bible(UserList):
         RETURNS:Book array.
         """
 
-        if not isinstance(type, string):
+        if not isinstance(type, str):
             raise TypeError("Argument should be of type string.")
         if type == "old":
             return self[:39]
@@ -238,7 +238,7 @@ class Bible(UserList):
             for word in verse.split():
                 if pattern.match(word):
                     no_of_words += 1
-            no_of_a_words_in_a_chapter += no_of_words
+            no_of_words_in_a_chapter += no_of_words
         yield no_of_words_in_a_chapter
 
 
@@ -302,11 +302,11 @@ class Compiler:
                 "api-key": API_KEY,
                 "accept":"application/json"
                  }
+                time.sleep(0.4)
                 response = rq.get(
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
                  )
-                 time.sleep(0.3)
                 return response.json()
             else:
                 print("Error 2")
@@ -314,13 +314,12 @@ class Compiler:
         except (HTTPError, ConnectionError, Timeout) :
             return False
             
-    def verse_exists(self, conn, book_id, chapter_num, verse_num):
+    def chapter_exists(self, conn, book_id, chapter_num):
         """
-        Check if verse exists already in database.
+        Check if chapter exists already in database.
         conn(sqlite3 connection instance): a connection instance for connecting to the database 
         book_id(str): book id of the verse. eg.GEN for Genesis 
         chapter_num(int): the chapter number of the verse
-        verse_num(int): the verse number of the verse 
         RETURN: True if verse exists else False
         """
         
@@ -328,8 +327,7 @@ class Compiler:
         cursor.execute(
         """
         SELECT text FROM verses WHERE book=? AND chapter_no=?
-        AND verse_no=?
-        """, (book_id, chapter_num, verse_num)
+        """, (book_id, chapter_num)
         )
         if cursor.fetchone():
             return True
@@ -346,15 +344,32 @@ class Compiler:
         conn = sqlite3.connect(path)
         utils.create_verse_table_if_not_exists(conn)
         attempts = 3
-        response = self.download_bible(**kwargs)
-        print(response)
-        while attempts > 0 and not response:
+        response= None
+        if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
+            conn.close()
+            return 
+        while attempts > 0:
             response = self.download_bible(**kwargs)
             attempts -= 1
-            if not response and attempts == 0:
-                raise bexc.NonBiblicalError("Chapter failed to download after three attempts.")
+            if not response:
+                time.sleep(0.1)
+                continue 
+            if "data"  not in response:
+                print(f"Attempt {attempts} failed for {kwargs['BOOK']} chapter {kwargs['CHAPTER']}")
+                time.sleep(1)  # optional delay between retries
+                continue
+                
+            if "statusCode" in response and response["statusCode"] != 200:
+                print(f"API error {response['statusCode']}: {response.get('message')}")
+                time.sleep(1)
+                continue
+            break 
+        if not response or "data" not in response:
+            conn.close()
+            raise bexc.NonBiblicalError("Chapter failed to download after three attempts.")
                 
         book_id = kwargs["BOOK"]
+        print(response.keys())
         html_content = response["data"]["content"] 
         soup = BeautifulSoup(html_content, "html.parser")
         verse_list = []
@@ -409,7 +424,7 @@ class Compiler:
             parameter["CHAPTER"] = chapter
             parameters.append(parameter)
                 
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             list(executor.map(
             lambda parameter: self.compile_chapter(path, **parameter),
                 parameters 
@@ -444,7 +459,7 @@ class Compiler:
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
         
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             list(executor.map(
             lambda parameter:self.compile_book(path, **parameter),
             parameters 
@@ -471,40 +486,57 @@ class Compiler:
         RETURNS: None
         """
         
-        with Compiler._lock:
-            conn = sqlite3.connect(path)
-            version = kwargs["VERSION"]
-            language = kwargs["LANGUAGE"]
-            book_id = kwargs["BOOK"]
-            chapter_id = kwargs["CHAPTER"]
-            bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
-            id_key = f"{version}_{language}"
-            if id_key in bible_ids.keys():
-                bible_id = bible_ids[id_key]
-                chapter_id = f"{book_id}.{chapter_id}"
-                headers = {
-                "api-key": API_KEY,
-                "accept":"application/json"
-                }
+        print(" Chapter")
+        conn = sqlite3.connect(path)
+        utils.create_verse_table_if_not_exists(conn)
+        attempts = 3
+        response= None
+        if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
+            conn.close()
+            return 
+        while attempts > 0:
+            response = self.download_bible(**kwargs)
+            attempts -= 1
+            if not response:
+                time.sleep(0.1)
+                continue 
+            if "data"  not in response:
+                print(f"Attempt {attempts} failed for {kwargs['BOOK']} chapter {kwargs['CHAPTER']}")
+                time.sleep(1)  # optional delay between retries
+                continue
                 
-                try:
-                    response = rq.get(
-                        f"{URL}/{bible_id}/chapters/{chapter_id}",
-                        headers=headers
-                    )
-                    html_content = response.json()["data"]["content"]
-                    soup = BeautifulSoup(html_content, "html.parser")
-                    verse_list = []
-                    for paragraph in soup.select("p.p"):
-                        for v in paragraph.select("span.v"):
-                            verse = []
-                            verse.append(v. next_sibling.strip())
-                            verse.append(kwargs["CHAPTER"])
-                            verse.append(book_id)
-                            verse.append(v.get("data-number"))
-                            verse = tuple(verse) 
-                            verse_list.append(verse)
-                    list(map(
+            if "statusCode" in response and response["statusCode"] != 200:
+                print(f"API error {response['statusCode']}: {response.get('message')}")
+                time.sleep(1)
+                continue
+            break 
+        if not response or "data" not in response:
+            conn.close()
+            raise bexc.NonBiblicalError("Chapter failed to download after three attempts.")
+                
+        book_id = kwargs["BOOK"]
+        print(response.keys())
+        html_content = response["data"]["content"] 
+        soup = BeautifulSoup(html_content, "html.parser")
+        verse_list = []
+        text = ""
+        for paragraph in soup.select("p.p"):
+              for v in paragraph.select("span.v"):
+                    verse = []
+                    verse.append(conn)
+                    if v.next_sibling:
+                        text = v.next_sibling.string
+                        if text is None:
+                            text = v.next_sibling.get_text(strip=True)
+                    verse.append(text)
+                    verse.append(kwargs["CHAPTER"])
+                    verse.append(book_id)
+                    verse.append(v.get("data-number")) 
+                    verse_list.append(verse)
+        with conn:
+            with Compiler._lock:
+                print("Locked")
+                list(map(
                         lambda verse: conn.execute(
                         f"""
                         UPDATE verses SET text=? WHERE book=? AND chapter_no=? AND verse_no=?
@@ -512,11 +544,7 @@ class Compiler:
                         ),
                         verse_list
                     ))
-                    conn.close()
-                except (HTTPError, ConnectionError, Timeout) as e:
-                    raise NonBiblicalError(e)
-            else:
-                raise KeyError("Version or language not found")    
+        conn.close()    
             
     def update_book(self, path, **kwargs):
         """
@@ -558,10 +586,7 @@ class Compiler:
         RETURNS:None
         """
         version, language, bible = None, None, None
-        if name == "DEFAULT":
-            path = f"DATABASES/{name}/{name}.db"
-        else:
-            path = f"DATABASES/{name}/{name}.db"
+        path = f"DATABASES/{name}/{name}.db"
         if os.path.exists(path):
             databases = utils.get_settings()["DATABASES"]
             bible = list(
@@ -594,5 +619,4 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT") 
-        
+    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
