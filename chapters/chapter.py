@@ -137,7 +137,7 @@ class Chapter(UserList):
         """
 
         try:
-            return self[number]
+            return self.data[number]
         except exc.VerseNotFoundError:
             return None
 
@@ -150,7 +150,7 @@ class Chapter(UserList):
         """
 
         try:
-            return self[start:stop:step]
+            return self.data[start:stop:step]
         except exc.VerseNotFoundError:
             return VerseArray([])
 

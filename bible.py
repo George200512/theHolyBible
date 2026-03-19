@@ -340,12 +340,13 @@ class Compiler:
         **kwargs: A keyword augmented list that tells you the version, language and chapter of the bible.
         RETURNS: None
         """
-        print(" Chapter")
+        
         conn = sqlite3.connect(path)
         utils.create_verse_table_if_not_exists(conn)
         attempts = 3
         response= None
         if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
+            print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']} already downloaded.")
             conn.close()
             return 
         while attempts > 0:
@@ -366,10 +367,10 @@ class Compiler:
             break 
         if not response or "data" not in response:
             conn.close()
-            raise bexc.NonBiblicalError("Chapter failed to download after three attempts.")
+            print(f"{kwargs['BOOK']} {kwargs['CHAPTER']} failed to download after three attempts.")
+            return 
                 
         book_id = kwargs["BOOK"]
-        print(response.keys())
         html_content = response["data"]["content"] 
         soup = BeautifulSoup(html_content, "html.parser")
         verse_list = []
@@ -389,11 +390,11 @@ class Compiler:
                     verse_list.append(verse)
         with conn:
             with Compiler._lock:
-                print("Locked")
                 list(map(
                     lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
                     verse_list
-                ))
+                ))            
+                print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
         conn.close()
             
             
@@ -404,7 +405,7 @@ class Compiler:
         kwargs: a dictionary containing the version, language and book id
         RETURNS: None
         """
-        print("book")
+        
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]

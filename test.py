@@ -81,7 +81,7 @@ class TestCompiler(unittest.TestCase):
          """
          
          with patch.object(Compiler, "__init__", lambda self: None):
-             with patch.object(Compiler, "compile_chapter", lambda self: None):
+             with patch.object(Compiler, "compile_chapter", lambda self, path, **parameter: None):
                  compiler = Compiler()
                  compiler.compile_book("DATABASES/good-news/good-news.db", **{
                  "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
@@ -96,7 +96,7 @@ class TestCompiler(unittest.TestCase):
          language= "en" 
          version = "KJV"
          with patch.object(Compiler, "__init__", lambda self:None):
-             with patch.object(Compiler, "compile_book", lambda self:None):
+             with patch.object(Compiler, "compile_book", lambda self, path, **parameter:None):
                  with patch("utils.set_settings", side_effect=lambda key, value:None):
                      Compiler().compile_bible(language=language, version=version)       
     
@@ -130,7 +130,7 @@ class TestCompiler(unittest.TestCase):
          """
          
          with patch.object(Compiler, "__init__", lambda self: None):
-             with patch.object(Compiler, "update_chapter", lambda self: None):
+             with patch.object(Compiler, "update_chapter", lambda self, path, **parameter: None):
                  compiler = Compiler()
                  compiler.update_book("DATABASES/good-news/good-news.db", **{
                  "VERSION": "KJV", "LANGUAGE": "en", "BOOK_ID":"GEN"
@@ -144,7 +144,7 @@ class TestCompiler(unittest.TestCase):
          """
          mock_connect.return_value = MagicMock()
          with patch.object(Compiler, "__init__", lambda self:None):
-             with patch.object(Compiler, "update_book", lambda self:None):
+             with patch.object(Compiler, "update_book", lambda self, path, **parameter:None):
                  with patch("utils.get_settings", return_value={
                  "DATABASES":[
                  {

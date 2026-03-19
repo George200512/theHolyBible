@@ -98,7 +98,7 @@ class TestChapter(test.TestBase):
             book=39,
         )
         verse_2 = verse.Verse(
-            self.conn, text="And Jesus wept.", book="John", verse_no=31, chapter_no=10
+            self.conn, text="And Jesus wept.", book=43, verse_no=35, chapter_no=11
         )
         verse_3 = verse.Verse(
             self.conn,
@@ -113,7 +113,7 @@ class TestChapter(test.TestBase):
     def test__get__item(self):
         """Check if the right objects are return if it is indexed the right way."""
         
-        self.assertEqual(str(self.chapter[1]), "Verse 1")
+        self.assertEqual(str(self.chapter[1]), "John 11 : 35")
         self.assertEqual(str(self.chapter[:2]), "[<VerseArray:2>]")
 
     def test_head(self):
@@ -133,16 +133,16 @@ class TestChapter(test.TestBase):
     def test_verse(self):
         """Test if the verse method returns the right verse number"""
         
-        self.assertEqual(str(self.chapter.verse(1)), "Verse 1")
+        self.assertEqual(str(self.chapter.verse(1)), " Obadiah 1 : 1")
         self.assertIsNone(self.chapter.verse(6))
         
     def test_verses(self):
         """Test if the right verses are generated"""
         
         verse_array = self.chapter.verses(1, 3)
-        self.assertEqual(list(str(v) for v in verse_array), ["Verse 1", "Verse 2", "Verse 3"])
+        self.assertEqual(list(str(v) for v in verse_array), ["Obadiah 1 : 1", "Obadiah 1 : 2" , "Obadiah 1 : 3"])
         verse_array = self.chapter.verses(1, 5, 2)
-        self.assertEqual(list(str(v) for v in verse_array), ["Verse 1", "Verse 3", "Verse 5"])
+        self.assertEqual(list(str(v) for v in verse_array), ["Obadiah 1 : 1", "Obadiah 1 : 3", "Obadiah 1 : 5"])
         
 
 #Define the test case class to handle ChapterArray test suite

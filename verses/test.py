@@ -81,7 +81,7 @@ class TestVerse(TestBase):
             verse_no=14,
             chapter_no=14,
         )
-        self.assertEqual(str(verse), "Verse 14")
+        self.assertEqual(str(verse), "Exodus 14 : 14")
 
     def test_create_verse_table_if_not_exists(self):
         """Check if table if created correctly"""

@@ -19,6 +19,7 @@ parent_dir = script_dir.parents[0]
 sys.path.append(str(parent_dir))
 
 from collections import UserString, UserList
+import utils
 
 
 class Favorite:
@@ -127,8 +128,9 @@ class Verse(UserString):
 
     def __str__(self):
         """A string representation of a verse"""
-
-        return f"Verse {self.verse}"
+        
+        book_name = utils.get_book(int(self.book))
+        return f"{book_name} {self.chapter} : {self.verse}"
 
     @property
     def value(self):
