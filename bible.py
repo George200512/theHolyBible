@@ -23,6 +23,7 @@ import threading
 from datetime import datetime 
 from pathlib import Path
 import time
+import queue
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -309,7 +310,6 @@ class Compiler:
                  )
                 return response.json()
             else:
-                print("Error 2")
                 raise KeyError("Version or language not found")
         except (HTTPError, ConnectionError, Timeout) :
             return False
@@ -390,10 +390,8 @@ class Compiler:
                     verse_list.append(verse)
         with conn:
             with Compiler._lock:
-                list(map(
-                    lambda verse: Verse(verse[0], verse[1], verse[2], verse[3], verse[4]),
-                    verse_list
-                ))            
+                for verse in verse_list:
+                    Verse(verse[0], verse[1], verse[2], verse[3], verse[4])           
                 print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
         conn.close()
             
@@ -424,12 +422,9 @@ class Compiler:
             parameter["BOOK"] = book_id
             parameter["CHAPTER"] = chapter
             parameters.append(parameter)
-                
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            list(executor.map(
-            lambda parameter: self.compile_chapter(path, **parameter),
-                parameters 
-                ))
+            
+        for parameter in parameters:
+            self.compile_chapter(path, **parameter)
                 
     def compile_bible(self, version, language, name=None):
         """
