@@ -326,12 +326,10 @@ class Compiler:
         cursor = conn.cursor()
         cursor.execute(
         """
-        SELECT text FROM verses WHERE book=? AND chapter_no=?
+        SELECT text FROM verses WHERE book=? AND chapter_no=? LIMIT 1
         """, (book_id, chapter_num)
         )
-        if cursor.fetchone():
-            return True
-        return False
+        return cursor.fetchone() is not None
 
     def compile_chapter(self, path, **kwargs):
         """
@@ -353,17 +351,8 @@ class Compiler:
             response = self.download_bible(**kwargs)
             attempts -= 1
             if not response:
-                time.sleep(0.1)
+                time.sleep(0.2)
                 continue 
-            if "data"  not in response:
-                print(f"Attempt {attempts} failed for {kwargs['BOOK']} chapter {kwargs['CHAPTER']}")
-                time.sleep(1)  # optional delay between retries
-                continue
-                
-            if "statusCode" in response and response["statusCode"] != 200:
-                print(f"API error {response['statusCode']}: {response.get('message')}")
-                time.sleep(1)
-                continue
             break 
         if not response or "data" not in response:
             conn.close()
@@ -380,7 +369,7 @@ class Compiler:
                     verse = []
                     verse.append(conn)
                     if v.next_sibling:
-                        text = v.next_sibling.string
+                        text = v.next_sibling.string.strip()
                         if text is None:
                             text = v.next_sibling.get_text(strip=True)
                     verse.append(text)
@@ -404,6 +393,7 @@ class Compiler:
         RETURNS: None
         """
         
+        print("Book")
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]

@@ -67,6 +67,8 @@ class Favorite:
 # Create a verse class to represent a single a verse.
 class Verse(UserString):
     """Initialise the arguments passed to the constructor"""
+    
+    favorite = Favorite()
 
     def __init__(self, connection, text, chapter_no, book, verse_no):
         """
@@ -85,12 +87,12 @@ class Verse(UserString):
         self._book = book
         self._verse = verse_no
         self._id = self.get_id()
-        self.favorite = Favorite()
         super().__init__(self._text)
 
     def get_id(self):
         """Generate the id of the verse if it has none or return the existing one"""
-
+        
+        print(" Get id")
         self.cursor.execute(
             """
             SELECT id FROM verses WHERE text=? AND chapter_no=? AND  verse_no=? AND book=?;
@@ -98,6 +100,7 @@ class Verse(UserString):
             (self._text, self._chapter, self._verse, self._book),
         )
         row = self.cursor.fetchone()
+        print(row)
         if row:
             return row[0]
         self.add_verse_if_not_added()
