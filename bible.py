@@ -308,6 +308,7 @@ class Compiler:
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
                  )
+                print(response.status_code)
                 return response.json()
             else:
                 raise KeyError("Version or language not found")
@@ -351,7 +352,7 @@ class Compiler:
             response = self.download_bible(**kwargs)
             attempts -= 1
             if not response:
-                time.sleep(0.2)
+                time.sleep(1)
                 continue 
             break 
         if not response or "data" not in response:
@@ -360,27 +361,27 @@ class Compiler:
             return 
                 
         book_id = kwargs["BOOK"]
-        html_content = response["data"]["content"] 
+        html_content = response["data"]["content"]
         soup = BeautifulSoup(html_content, "html.parser")
         verse_list = []
-        text = ""
-        for paragraph in soup.select("p.p"):
-              for v in paragraph.select("span.v"):
-                    verse = []
-                    verse.append(conn)
-                    if v.next_sibling:
-                        text = v.next_sibling.string.strip()
-                        if text is None:
-                            text = v.next_sibling.get_text(strip=True)
-                    verse.append(text)
-                    verse.append(kwargs["CHAPTER"])
-                    verse.append(book_id)
-                    verse.append(v.get("data-number")) 
-                    verse_list.append(verse)
+        text = "" 
+        for paragraph in soup.select("p.q1"):
+              for verse in paragraph.select(".v"):
+                  verse_node = [] 
+                  text = utils.extract_verse_text(verse_node)
+                  verse_node.append(text)
+                  verse_node.append(kwargs["CHAPTER"])
+                  verse_node.append(kwargs["BOOK"])
+                  verse_node.append(verse.get("data-number"))
+                  verse_list.append(verse_node)
         with conn:
             with Compiler._lock:
                 for verse in verse_list:
-                    Verse(verse[0], verse[1], verse[2], verse[3], verse[4])           
+                    #Verse(conn, verse[0], verse[1], verse[2], verse[3])    
+                    conn.execute("""
+        INSERT OR IGNORE INTO verses(text, chapter_no, verse_no, book)
+        VALUES (?, ?, ?, ?)
+    """, (verse[0], verse[1], verse[2], verse[3]))       
                 print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
         conn.close()
             
@@ -605,4 +606,13 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    #Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    headers = {
+                "api-key": API_KEY,
+                "accept":"application/json"
+                 }
+    response = rq.get(
+    f"{URL}/engKJV/books",
+    headers=headers
+    ).json()
+    print(response)

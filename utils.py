@@ -13,6 +13,7 @@ A script that contains the frequently used functions for easy accessibility
 import json
 from pathlib import Path
 import threading 
+from bs4 import Tag, NavigableString
 
 SETTINGS_PATH = Path(__file__).parent / "settings.json"
 lock = threading.Lock()
@@ -29,7 +30,8 @@ def create_verse_table_if_not_exists(conn):
             chapter_no INTEGER,
             verse_no INTEGER,
             book TEXT,
-            favorite INTEGER DEFAULT 0
+            favorite INTEGER DEFAULT 0,
+            UNIQUE(chapter_no, verse_no, book)
             );
             """
     )
@@ -91,6 +93,21 @@ def set_settings(key, value):
            with open(SETTINGS_PATH, mode="w", encoding="utf-8") as file:
                settings[key] = value
                json.dump(settings, file, indent=4)
+               
+def extract_verse_text(verse_node:Tag)->str:
+    """Extract the verse text from an HTML beautiful soup object""" 
+    
+    verse_node = verse_node.next_sibling
+    text_parts = []
+    while verse_node is not None:
+        if isinstance(verse_node, Tag) and "v" in verse_node.get("class", []):
+            break
+        elif isinstance(verse_node, Tag):
+            text_parts.append(verse_node.get_text(" ", strip=True))
+        elif isinstance(verse_node, NavigableString):
+            text_parts.append(verse_node.strip())
+        verse_node = verse_node.next_sibling
+    return " ".join(text_parts)
                    
        
 if __name__ == "__main__":

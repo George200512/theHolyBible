@@ -92,21 +92,19 @@ class Verse(UserString):
     def get_id(self):
         """Generate the id of the verse if it has none or return the existing one"""
         
-        print(" Get id")
         self.cursor.execute(
             """
-            SELECT id FROM verses WHERE text=? AND chapter_no=? AND  verse_no=? AND book=?;
+            SELECT id FROM verses WHERE chapter_no=? AND  verse_no=? AND book=?;
             """,
             (self._text, self._chapter, self._verse, self._book),
         )
         row = self.cursor.fetchone()
-        print(row)
         if row:
             return row[0]
         self.add_verse_if_not_added()
         self.cursor.execute(
             """
-            SELECT id FROM verses WHERE text=? AND chapter_no=? AND  verse_no=? AND book=?;
+            SELECT id FROM verses WHERE chapter_no=? AND  verse_no=? AND book=?;
             """,
             (self._text, self._chapter, self._verse, self._book),
         )
@@ -118,11 +116,10 @@ class Verse(UserString):
 
         self.cursor.execute(
             """
-            INSERT INTO verses(text, chapter_no, verse_no,  book) VALUES (?, ?, ?, ?);
+            INSERT OR IGNORE INTO verses(text, chapter_no, verse_no,  book) VALUES (?, ?, ?, ?);
             """,
             (self._text, self._chapter, self._verse, self._book),
         )
-        self.conn.commit()
 
     def __repr__(self):
         """Return a representation of the verse that can be used to create a verse"""
