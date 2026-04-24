@@ -364,24 +364,22 @@ class Compiler:
         html_content = response["data"]["content"]
         soup = BeautifulSoup(html_content, "html.parser")
         verse_list = []
-        text = "" 
         for paragraph in soup.select("p.q1"):
               for verse in paragraph.select(".v"):
                   verse_node = [] 
-                  text = utils.extract_verse_text(verse_node)
+                  text = utils.extract_verse_text(verse)
+                  print(text)
                   verse_node.append(text)
                   verse_node.append(kwargs["CHAPTER"])
                   verse_node.append(kwargs["BOOK"])
                   verse_node.append(verse.get("data-number"))
-                  verse_list.append(verse_node)
+                  verse_list.append(tuple(verse_node))
         with conn:
-            with Compiler._lock:
-                for verse in verse_list:
-                    #Verse(conn, verse[0], verse[1], verse[2], verse[3])    
-                    conn.execute("""
+            with Compiler._lock:  
+                conn.executemany("""
         INSERT OR IGNORE INTO verses(text, chapter_no, verse_no, book)
         VALUES (?, ?, ?, ?)
-    """, (verse[0], verse[1], verse[2], verse[3]))       
+    """, verse_list)       
                 print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
         conn.close()
             
@@ -606,8 +604,8 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    #Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
-    headers = {
+    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    """headers = {
                 "api-key": API_KEY,
                 "accept":"application/json"
                  }
@@ -615,4 +613,4 @@ if __name__ == "__main__":
     f"{URL}/engKJV/books",
     headers=headers
     ).json()
-    print(response)
+    print(response)"""
