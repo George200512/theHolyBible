@@ -308,7 +308,6 @@ class Compiler:
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
                  )
-                print(response.status_code)
                 return response.json()
             else:
                 raise KeyError("Version or language not found")
@@ -368,7 +367,6 @@ class Compiler:
               for verse in paragraph.select(".v"):
                   verse_node = [] 
                   text = utils.extract_verse_text(verse)
-                  print(text)
                   verse_node.append(text)
                   verse_node.append(kwargs["CHAPTER"])
                   verse_node.append(kwargs["BOOK"])
@@ -396,10 +394,10 @@ class Compiler:
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]
-        books = utils.get_settings().copy()["BOOKS"]
+        books = self.book_ids
         chapter_no = None
         for book in books:        
-            if book["id"][0] == book_id:
+            if book== book_id:
                 chapter_no = book["chapters"]
                 break
                     
@@ -432,12 +430,31 @@ class Compiler:
         folder_path = Path(path).parent
         folder_path.mkdir(parents=True, exist_ok=True) 
                    
-        book_ids = []
-        books = utils.get_settings().copy()["BOOKS"]
-        for book in books:
-            book_ids.append(book["id"][0])
+        self.book_ids = []
+        bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
+        id_key = f"{version}_{language}"
+        if id_key in bible_ids.keys():
+            bible_id = bible_ids[id_key]
+            headers = {
+                "api-key": API_KEY,
+                "accept":"application/json"
+            }
+            response = rq.get(
+                f'https://api.scripture.api.bible/v1/bibles/{bible_id}/books', 
+                headers=headers
+            )
+            data = response.json()["data"]
+            for d in data:
+                self.book_ids.append(d["id"])
+                print(d)
+                return 
+        else:
+            raise KeyError("Version or language not found")
+       
+        #for book in self.book_ids:
+            #    self.book_ids.append(book)
         parameters= []
-        for book_id in book_ids:
+        for book_id in self.book_ids:
             parameter = {}
             parameter["BOOK_ID"] = book_id
             parameter["VERSION"] = version 
@@ -605,12 +622,7 @@ class Compiler:
 
 if __name__ == "__main__":       
     Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
-    """headers = {
-                "api-key": API_KEY,
-                "accept":"application/json"
-                 }
-    response = rq.get(
-    f"{URL}/engKJV/books",
-    headers=headers
-    ).json()
-    print(response)"""
+
+    
+    
+    
