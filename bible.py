@@ -303,7 +303,7 @@ class Compiler:
                 "api-key": API_KEY,
                 "accept":"application/json"
                  }
-                time.sleep(0.4)
+                time.sleep(0.3)
                 response = rq.get(
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
@@ -351,7 +351,7 @@ class Compiler:
             response = self.download_bible(**kwargs)
             attempts -= 1
             if not response:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue 
             break 
         if not response or "data" not in response:
@@ -377,9 +377,8 @@ class Compiler:
                 conn.executemany("""
         INSERT OR IGNORE INTO verses(text, chapter_no, verse_no, book)
         VALUES (?, ?, ?, ?)
-    """, verse_list)       
+        """, verse_list)
                 print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
-        conn.close()
             
             
     def compile_book(self, path, **kwargs):
@@ -397,8 +396,8 @@ class Compiler:
         books = self.book_ids
         chapter_no = None
         for book in books:        
-            if book== book_id:
-                chapter_no = book["chapters"]
+            if book["id"] == book_id:
+                chapter_no = book["chapter_no"]
                 break
                     
         parameters = []
@@ -444,19 +443,22 @@ class Compiler:
                 headers=headers
             )
             data = response.json()["data"]
-            for d in data:
-                self.book_ids.append(d["id"])
-                print(d)
-                return 
+            for i, d in enumerate(data):
+                if i == 66:
+                    break
+                chapter_no = utils.get_settings()["BOOKS"][i]["chapters"]
+                temp = {
+                   "id" : d["id"],
+                   "chapter_no": chapter_no
+                }
+                self.book_ids.append(temp)
         else:
             raise KeyError("Version or language not found")
        
-        #for book in self.book_ids:
-            #    self.book_ids.append(book)
         parameters= []
         for book_id in self.book_ids:
             parameter = {}
-            parameter["BOOK_ID"] = book_id
+            parameter["BOOK_ID"] = book_id["id"]
             parameter["VERSION"] = version 
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
@@ -621,7 +623,14 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    #Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    exists = os.path.exists("DATABASES/DEFAULT/DEFAULT.db")
+    print(exists)
+    conn = sqlite3.connect("DATABASES/DEFAULT/DEFAULT.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM verses;")
+    for data in cursor.fetchall():
+        print(data)
 
     
     
