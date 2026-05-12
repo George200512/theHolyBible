@@ -303,7 +303,7 @@ class Compiler:
                 "api-key": API_KEY,
                 "accept":"application/json"
                  }
-                time.sleep(0.3)
+                time.sleep(0.4)
                 response = rq.get(
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
@@ -311,7 +311,7 @@ class Compiler:
                 return response.json()
             else:
                 raise KeyError("Version or language not found")
-        except (HTTPError, ConnectionError, Timeout) :
+        except (HTTPError, ConnectionError, Timeout) as e :
             return False
             
     def chapter_exists(self, conn, book_id, chapter_num):
@@ -351,26 +351,27 @@ class Compiler:
             response = self.download_bible(**kwargs)
             attempts -= 1
             if not response:
-                time.sleep(0.3)
+                time.sleep(1)
                 continue 
             break 
         if not response or "data" not in response:
             conn.close()
             print(f"{kwargs['BOOK']} {kwargs['CHAPTER']} failed to download after three attempts.")
+            print(response)
             return 
                 
         book_id = kwargs["BOOK"]
         html_content = response["data"]["content"]
         soup = BeautifulSoup(html_content, "html.parser")
         verse_list = []
-        for paragraph in soup.select("p.q1"):
-              for verse in paragraph.select(".v"):
+        for paragraph in soup.select("p"):
+              for verse in paragraph.select("span.v"):
                   verse_node = [] 
                   text = utils.extract_verse_text(verse)
                   verse_node.append(text)
                   verse_node.append(kwargs["CHAPTER"])
-                  verse_node.append(kwargs["BOOK"])
                   verse_node.append(verse.get("data-number"))
+                  verse_node.append(kwargs["BOOK"])
                   verse_list.append(tuple(verse_node))
         with conn:
             with Compiler._lock:  
@@ -430,7 +431,7 @@ class Compiler:
         folder_path.mkdir(parents=True, exist_ok=True) 
                    
         self.book_ids = []
-        bible_ids = utils.get_settings().copy()["BIBLE_IDS"]
+        bible_ids = utils.get_settings()["BIBLE_IDS"]
         id_key = f"{version}_{language}"
         if id_key in bible_ids.keys():
             bible_id = bible_ids[id_key]
@@ -451,7 +452,14 @@ class Compiler:
                    "id" : d["id"],
                    "chapter_no": chapter_no
                 }
+                #print(temp)  
                 self.book_ids.append(temp)
+            print(len(self.book_ids))
+            return
+            bible_path = ("/").join(path.split('/')[0:2]) + "/settings.json"
+            if not os.path.exists(bible_path):
+                with open(bible_path, mode="w", encoding="utf-8") as file:
+                    json.dump(self.book_ids, file, indent=4)
         else:
             raise KeyError("Version or language not found")
        
@@ -623,14 +631,12 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    #Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
-    exists = os.path.exists("DATABASES/DEFAULT/DEFAULT.db")
-    print(exists)
-    conn = sqlite3.connect("DATABASES/DEFAULT/DEFAULT.db")
+    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
+    """conn = sqlite3.connect("DATABASES/DEFAULT/DEFAULT.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM verses;")
     for data in cursor.fetchall():
-        print(data)
+        print(data)"""
 
     
     
