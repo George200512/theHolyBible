@@ -156,111 +156,111 @@
         "chapter_no": 4
     },
     {
-        "id": "1ES",
-        "chapter_no": 28
-    },
-    {
-        "id": "2ES",
-        "chapter_no": 16
-    },
-    {
-        "id": "TOB",
-        "chapter_no": 24
-    },
-    {
-        "id": "JDT",
-        "chapter_no": 21
-    },
-    {
-        "id": "ESG",
-        "chapter_no": 28
-    },
-    {
-        "id": "WIS",
-        "chapter_no": 16
-    },
-    {
-        "id": "SIR",
-        "chapter_no": 16
-    },
-    {
-        "id": "BAR",
-        "chapter_no": 13
-    },
-    {
-        "id": "S3Y",
-        "chapter_no": 6
-    },
-    {
-        "id": "SUS",
-        "chapter_no": 6
-    },
-    {
-        "id": "BEL",
-        "chapter_no": 4
-    },
-    {
-        "id": "MAN",
-        "chapter_no": 4
-    },
-    {
-        "id": "1MA",
-        "chapter_no": 5
-    },
-    {
-        "id": "2MA",
-        "chapter_no": 3
-    },
-    {
         "id": "MAT",
-        "chapter_no": 6
+        "chapter_no": 28
     },
     {
         "id": "MRK",
-        "chapter_no": 4
+        "chapter_no": 16
     },
     {
         "id": "LUK",
-        "chapter_no": 3
+        "chapter_no": 24
     },
     {
         "id": "JHN",
-        "chapter_no": 1
+        "chapter_no": 21
     },
     {
         "id": "ACT",
-        "chapter_no": 13
+        "chapter_no": 28
     },
     {
         "id": "ROM",
-        "chapter_no": 5
+        "chapter_no": 16
     },
     {
         "id": "1CO",
-        "chapter_no": 5
+        "chapter_no": 16
     },
     {
         "id": "2CO",
-        "chapter_no": 3
+        "chapter_no": 13
     },
     {
         "id": "GAL",
-        "chapter_no": 5
+        "chapter_no": 6
     },
     {
         "id": "EPH",
-        "chapter_no": 1
+        "chapter_no": 6
     },
     {
         "id": "PHP",
-        "chapter_no": 1
+        "chapter_no": 4
     },
     {
         "id": "COL",
-        "chapter_no": 1
+        "chapter_no": 4
     },
     {
         "id": "1TH",
+        "chapter_no": 5
+    },
+    {
+        "id": "2TH",
+        "chapter_no": 3
+    },
+    {
+        "id": "1TI",
+        "chapter_no": 6
+    },
+    {
+        "id": "2TI",
+        "chapter_no": 4
+    },
+    {
+        "id": "TIT",
+        "chapter_no": 3
+    },
+    {
+        "id": "PHM",
+        "chapter_no": 1
+    },
+    {
+        "id": "HEB",
+        "chapter_no": 13
+    },
+    {
+        "id": "JAS",
+        "chapter_no": 5
+    },
+    {
+        "id": "1PE",
+        "chapter_no": 5
+    },
+    {
+        "id": "2PE",
+        "chapter_no": 3
+    },
+    {
+        "id": "1JN",
+        "chapter_no": 5
+    },
+    {
+        "id": "2JN",
+        "chapter_no": 1
+    },
+    {
+        "id": "3JN",
+        "chapter_no": 1
+    },
+    {
+        "id": "JUD",
+        "chapter_no": 1
+    },
+    {
+        "id": "REV",
         "chapter_no": 22
     }
 ]

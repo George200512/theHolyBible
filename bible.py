@@ -24,6 +24,7 @@ from datetime import datetime
 from pathlib import Path
 import time
 import queue
+import logging
 
 from books.book import BookArray, Book
 from books import exceptions as exc
@@ -35,6 +36,12 @@ dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 API_KEY = os.getenv("API_KEY")
 URL = "https://api.scripture.api.bible/v1/bibles"
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s -%(asctime)s: %(message)s"
+)
+TOTAL_CHAPTER_NO = 1_189
 
 
 class Bible(UserList):
@@ -255,8 +262,9 @@ class Compiler:
     def __init__(self):
         """A method that is called immediately an object of the class is created"""
 
-        versions = {}
-        bible_ids = {}
+        self.versions = {}
+        self.bible_ids = {}
+        self.downloaded_chapters = 0
         if utils.get_settings().get("VERSIONS") is None:
             try:
                 self.response = rq.get(URL, headers={"api-key": API_KEY}, timeout=(6.3, 30))
@@ -303,7 +311,7 @@ class Compiler:
                 "api-key": API_KEY,
                 "accept":"application/json"
                  }
-                time.sleep(0.4)
+                time.sleep(0.2)
                 response = rq.get(
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
@@ -344,7 +352,7 @@ class Compiler:
         attempts = 3
         response= None
         if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
-            print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']} already downloaded.")
+            self.downloaded_chapters += 1
             conn.close()
             return 
         while attempts > 0:
@@ -356,8 +364,7 @@ class Compiler:
             break 
         if not response or "data" not in response:
             conn.close()
-            print(f"{kwargs['BOOK']} {kwargs['CHAPTER']} failed to download after three attempts.")
-            print(response)
+            logging.warning(f"{kwargs['BOOK']} {kwargs['CHAPTER']} failed to download after three attempts.")
             return 
                 
         book_id = kwargs["BOOK"]
@@ -379,8 +386,11 @@ class Compiler:
         INSERT OR IGNORE INTO verses(text, chapter_no, verse_no, book)
         VALUES (?, ?, ?, ?)
         """, verse_list)
-                print(f"{kwargs['BOOK']} chapter {kwargs['CHAPTER']}  downloaded.")
-            
+            self.downloaded_chapters += 1
+            download_percentage = round((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
+            logger.info(f"{download_percentage}% downloaded.")
+            logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} chapters complete.")
+              
             
     def compile_book(self, path, **kwargs):
         """
@@ -429,39 +439,42 @@ class Compiler:
             path = f"DATABASES/{name}/{name}.db"
         folder_path = Path(path).parent
         folder_path.mkdir(parents=True, exist_ok=True) 
-                   
+        
+        bible_path = ("/").join(path.split('/')[0:2]) + "/settings.json"
         self.book_ids = []
-        bible_ids = utils.get_settings()["BIBLE_IDS"]
-        id_key = f"{version}_{language}"
-        if id_key in bible_ids.keys():
-            bible_id = bible_ids[id_key]
-            headers = {
+        if not os.path.exists(bible_path): 
+            bible_ids = utils.get_settings()["BIBLE_IDS"]
+            id_key = f"{version}_{language}"
+            if id_key in bible_ids.keys():
+                bible_id = bible_ids[id_key]
+                headers = {
                 "api-key": API_KEY,
-                "accept":"application/json"
-            }
-            response = rq.get(
-                f'https://api.scripture.api.bible/v1/bibles/{bible_id}/books', 
-                headers=headers
-            )
-            data = response.json()["data"]
-            for i, d in enumerate(data):
-                if i == 66:
-                    break
-                chapter_no = utils.get_settings()["BOOKS"][i]["chapters"]
-                temp = {
-                   "id" : d["id"],
-                   "chapter_no": chapter_no
+                "accept":"application/json" 
                 }
-                #print(temp)  
-                self.book_ids.append(temp)
-            print(len(self.book_ids))
-            return
-            bible_path = ("/").join(path.split('/')[0:2]) + "/settings.json"
-            if not os.path.exists(bible_path):
+                try:
+                    response = rq.get(
+                    f'https://api.scripture.api.bible/v1/bibles/{bible_id}/books', 
+                    headers=headers
+                    )
+                except (Timeout, ConnectionError, HTTPError) as e:
+                    raise bexc.NonBiblicalError(e)
+                data = response.json()["data"]
+                for d in data:
+                    if d["id"] in utils.CANONICAL_BOOKS:
+                        temp = {
+                        "id": d["id"]
+                        }
+                        self.book_ids.append(temp)
+                books = utils.get_settings()["BOOKS"]
+                for idx, book_id in enumerate(self.book_ids):
+                    self.book_ids[idx]["chapter_no"] = books[idx]["chapters"]
                 with open(bible_path, mode="w", encoding="utf-8") as file:
                     json.dump(self.book_ids, file, indent=4)
+            else:
+                 raise KeyError("Version or language not found")
         else:
-            raise KeyError("Version or language not found")
+            with open(bible_path, mode="r", encoding="utf-8") as file:
+                self.book_ids = json.load(file)
        
         parameters= []
         for book_id in self.book_ids:
