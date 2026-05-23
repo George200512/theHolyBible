@@ -347,19 +347,19 @@ class Compiler:
         RETURNS: None
         """
         
-        conn = sqlite3.connect(path)
-        utils.create_verse_table_if_not_exists(conn)
+        conn = sqlite3.connect(path, timeout=30)
         attempts = 3
         response= None
         if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
-            self.downloaded_chapters += 1
+            with Compiler._lock:
+                self.downloaded_chapters += 1
             conn.close()
             return 
         while attempts > 0:
             response = self.download_bible(**kwargs)
             attempts -= 1
             if not response:
-                time.sleep(1)
+                time.sleep(0.3)
                 continue 
             break 
         if not response or "data" not in response:
@@ -381,15 +381,16 @@ class Compiler:
                   verse_node.append(kwargs["BOOK"])
                   verse_list.append(tuple(verse_node))
         with conn:
-            with Compiler._lock:  
-                conn.executemany("""
+            conn.executemany("""
         INSERT OR IGNORE INTO verses(text, chapter_no, verse_no, book)
         VALUES (?, ?, ?, ?)
         """, verse_list)
+        with Compiler._lock:
             self.downloaded_chapters += 1
-            download_percentage = round((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
-            logger.info(f"{download_percentage}% downloaded.")
-            logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} chapters complete.")
+        download_percentage = round((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
+        logger.info(f"{download_percentage}% downloaded...")
+        logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} chapters complete.")
+        conn.close()
               
             
     def compile_book(self, path, **kwargs):
@@ -400,7 +401,6 @@ class Compiler:
         RETURNS: None
         """
         
-        print("Book")
         version = kwargs["VERSION"]
         language= kwargs["LANGUAGE"]
         book_id = kwargs["BOOK_ID"]
@@ -431,14 +431,20 @@ class Compiler:
         name: a string representing the name of the bible. defaults:None
         RETURNS:None
         """
-        print("Started ")
+        
+        start_time = time.perf_counter()
+        logger.info("Bible download commenced.")
+        logger.info(f"0% percent downloaded...")
         path = None
         if name is None:
             path = f"DATABASES/{version}_{language}/{version}_{language}.db"
         else:
             path = f"DATABASES/{name}/{name}.db"
         folder_path = Path(path).parent
-        folder_path.mkdir(parents=True, exist_ok=True) 
+        folder_path.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(path, timeout=30)
+        conn.execute("PRAGMA journal_mode=WAL")
+        utils.create_verse_table_if_not_exists(conn)   
         
         bible_path = ("/").join(path.split('/')[0:2]) + "/settings.json"
         self.book_ids = []
@@ -484,11 +490,13 @@ class Compiler:
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
         
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             list(executor.map(
             lambda parameter:self.compile_book(path, **parameter),
             parameters 
             ))
+        conn.close()
+        end_time = time.perf_counter()
         bible = {}
         bible["path"] = path
         bible["version"] = version 
@@ -501,7 +509,13 @@ class Compiler:
         databases = utils.get_settings()["DATABASES"]
         databases.append(bible)
         utils.set_settings("DATABASES", databases)
-        print("Download complete..")
+        logger.info("Download complete..")
+        logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} downloaded.")
+        logger.info(f"Completed in{end_time - start_time:.4f} seconds")
+        difference = TOTAL_CHAPTER_NO - self.downloaded_chapters
+        if difference > 0:
+            logger.info(f"{difference} chapters of the bible couldn't download.")
+            logger.info("Please try downloading the bible again.")
             
     def update_chapter(self, path, **kwargs):
         """
