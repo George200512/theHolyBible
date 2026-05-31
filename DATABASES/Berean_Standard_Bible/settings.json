@@ -1,0 +1,266 @@
+[
+    {
+        "id": "GEN",
+        "chapter_no": 50
+    },
+    {
+        "id": "EXO",
+        "chapter_no": 40
+    },
+    {
+        "id": "LEV",
+        "chapter_no": 27
+    },
+    {
+        "id": "NUM",
+        "chapter_no": 36
+    },
+    {
+        "id": "DEU",
+        "chapter_no": 34
+    },
+    {
+        "id": "JOS",
+        "chapter_no": 24
+    },
+    {
+        "id": "JDG",
+        "chapter_no": 21
+    },
+    {
+        "id": "RUT",
+        "chapter_no": 4
+    },
+    {
+        "id": "1SA",
+        "chapter_no": 31
+    },
+    {
+        "id": "2SA",
+        "chapter_no": 24
+    },
+    {
+        "id": "1KI",
+        "chapter_no": 22
+    },
+    {
+        "id": "2KI",
+        "chapter_no": 25
+    },
+    {
+        "id": "1CH",
+        "chapter_no": 29
+    },
+    {
+        "id": "2CH",
+        "chapter_no": 36
+    },
+    {
+        "id": "EZR",
+        "chapter_no": 10
+    },
+    {
+        "id": "NEH",
+        "chapter_no": 13
+    },
+    {
+        "id": "EST",
+        "chapter_no": 10
+    },
+    {
+        "id": "JOB",
+        "chapter_no": 42
+    },
+    {
+        "id": "PSA",
+        "chapter_no": 150
+    },
+    {
+        "id": "PRO",
+        "chapter_no": 31
+    },
+    {
+        "id": "ECC",
+        "chapter_no": 12
+    },
+    {
+        "id": "SNG",
+        "chapter_no": 8
+    },
+    {
+        "id": "ISA",
+        "chapter_no": 66
+    },
+    {
+        "id": "JER",
+        "chapter_no": 52
+    },
+    {
+        "id": "LAM",
+        "chapter_no": 5
+    },
+    {
+        "id": "EZK",
+        "chapter_no": 48
+    },
+    {
+        "id": "DAN",
+        "chapter_no": 12
+    },
+    {
+        "id": "HOS",
+        "chapter_no": 14
+    },
+    {
+        "id": "JOL",
+        "chapter_no": 3
+    },
+    {
+        "id": "AMO",
+        "chapter_no": 9
+    },
+    {
+        "id": "OBA",
+        "chapter_no": 1
+    },
+    {
+        "id": "JON",
+        "chapter_no": 4
+    },
+    {
+        "id": "MIC",
+        "chapter_no": 7
+    },
+    {
+        "id": "NAM",
+        "chapter_no": 3
+    },
+    {
+        "id": "HAB",
+        "chapter_no": 3
+    },
+    {
+        "id": "ZEP",
+        "chapter_no": 3
+    },
+    {
+        "id": "HAG",
+        "chapter_no": 2
+    },
+    {
+        "id": "ZEC",
+        "chapter_no": 14
+    },
+    {
+        "id": "MAL",
+        "chapter_no": 4
+    },
+    {
+        "id": "MAT",
+        "chapter_no": 28
+    },
+    {
+        "id": "MRK",
+        "chapter_no": 16
+    },
+    {
+        "id": "LUK",
+        "chapter_no": 24
+    },
+    {
+        "id": "JHN",
+        "chapter_no": 21
+    },
+    {
+        "id": "ACT",
+        "chapter_no": 28
+    },
+    {
+        "id": "ROM",
+        "chapter_no": 16
+    },
+    {
+        "id": "1CO",
+        "chapter_no": 16
+    },
+    {
+        "id": "2CO",
+        "chapter_no": 13
+    },
+    {
+        "id": "GAL",
+        "chapter_no": 6
+    },
+    {
+        "id": "EPH",
+        "chapter_no": 6
+    },
+    {
+        "id": "PHP",
+        "chapter_no": 4
+    },
+    {
+        "id": "COL",
+        "chapter_no": 4
+    },
+    {
+        "id": "1TH",
+        "chapter_no": 5
+    },
+    {
+        "id": "2TH",
+        "chapter_no": 3
+    },
+    {
+        "id": "1TI",
+        "chapter_no": 6
+    },
+    {
+        "id": "2TI",
+        "chapter_no": 4
+    },
+    {
+        "id": "TIT",
+        "chapter_no": 3
+    },
+    {
+        "id": "PHM",
+        "chapter_no": 1
+    },
+    {
+        "id": "HEB",
+        "chapter_no": 13
+    },
+    {
+        "id": "JAS",
+        "chapter_no": 5
+    },
+    {
+        "id": "1PE",
+        "chapter_no": 5
+    },
+    {
+        "id": "2PE",
+        "chapter_no": 3
+    },
+    {
+        "id": "1JN",
+        "chapter_no": 5
+    },
+    {
+        "id": "2JN",
+        "chapter_no": 1
+    },
+    {
+        "id": "3JN",
+        "chapter_no": 1
+    },
+    {
+        "id": "JUD",
+        "chapter_no": 1
+    },
+    {
+        "id": "REV",
+        "chapter_no": 22
+    }
+]

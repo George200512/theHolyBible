@@ -16,7 +16,7 @@ import threading
 from bs4 import Tag, NavigableString
 
 SETTINGS_PATH = Path(__file__).parent / "settings.json"
-lock = threading.Lock()
+lock = threading.RLock()
 
 CANONICAL_BOOKS = {
     "GEN", "EXO", "LEV", "NUM", "DEU",

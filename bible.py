@@ -23,7 +23,7 @@ import threading
 from datetime import datetime 
 from pathlib import Path
 import time
-import queue
+import traceback 
 import logging
 
 from books.book import BookArray, Book
@@ -257,7 +257,7 @@ class Compiler:
     from the internet and create a new database for a new bible version or update the existing one.
     """
     
-    _lock = threading.Lock()
+    _lock = threading.RLock()
 
     def __init__(self):
         """A method that is called immediately an object of the class is created"""
@@ -316,7 +316,12 @@ class Compiler:
                     f"{URL}/{bible_id}/chapters/{chapter_id}",
                     headers=headers, timeout=(6.3, 30)
                  )
-                return response.json()
+                if response.status_code != 200:
+                    raise HTTPError(f"Http Error {response.status_code}: {response.text}")
+                try:
+                    return response.json()
+                except ValueError:
+                    print("Invalid JSON response")
             else:
                 raise KeyError("Version or language not found")
         except (HTTPError, ConnectionError, Timeout) as e :
@@ -348,13 +353,18 @@ class Compiler:
         """
         
         conn = sqlite3.connect(path, timeout=30)
+        conn.execute("PRAGMA journal_mode=WAL")
         attempts = 3
         response= None
         if self.chapter_exists(conn, kwargs["BOOK"], kwargs["CHAPTER"]):
             with Compiler._lock:
-                self.downloaded_chapters += 1
+                self.downloaded_chapters += 1    
+            download_percentage = int((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
+            logger.info(f"{download_percentage}% downloaded...")
+            logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} chapters complete.")
             conn.close()
             return 
+            
         while attempts > 0:
             response = self.download_bible(**kwargs)
             attempts -= 1
@@ -387,7 +397,7 @@ class Compiler:
         """, verse_list)
         with Compiler._lock:
             self.downloaded_chapters += 1
-        download_percentage = round((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
+        download_percentage = int((self.downloaded_chapters / TOTAL_CHAPTER_NO) * 100)
         logger.info(f"{download_percentage}% downloaded...")
         logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} chapters complete.")
         conn.close()
@@ -490,18 +500,23 @@ class Compiler:
             parameter["LANGUAGE"] = language 
             parameters.append(parameter)
         
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            list(executor.map(
-            lambda parameter:self.compile_book(path, **parameter),
-            parameters 
-            ))
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futuers = [
+                executor.submit(self.compile_book, path, **parameter) 
+                for parameter in parameters
+            ]
+            for future in futuers:
+                try:
+                    future.result() 
+                except Exception as e:
+                    traceback.print_exc()
         conn.close()
         end_time = time.perf_counter()
         bible = {}
         bible["path"] = path
         bible["version"] = version 
         bible["language"] = language 
-        bible["lastUpdated"] = datetime.now()
+        bible["lastUpdated"] = datetime.now().isoformat()
         if name is not None:
             bible["name"] = name
         else:
@@ -511,7 +526,7 @@ class Compiler:
         utils.set_settings("DATABASES", databases)
         logger.info("Download complete..")
         logger.info(f"{self.downloaded_chapters} out of {TOTAL_CHAPTER_NO} downloaded.")
-        logger.info(f"Completed in{end_time - start_time:.4f} seconds")
+        logger.info(f"Completed in{end_time - start_time/60:.4f} seconds")
         difference = TOTAL_CHAPTER_NO - self.downloaded_chapters
         if difference > 0:
             logger.info(f"{difference} chapters of the bible couldn't download.")
@@ -658,8 +673,8 @@ class Compiler:
             )
 
 if __name__ == "__main__":       
-    Compiler().compile_bible(language="eng", version="engKJV", name="DEFAULT")
-    """conn = sqlite3.connect("DATABASES/DEFAULT/DEFAULT.db")
+    Compiler().compile_bible(language="eng", version="BSB", name="Berean_Standard_Bible")
+    """conn = sqlite3.connect("DATABASES#/DEFAULT/DEFAULT.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM verses;")
     for data in cursor.fetchall():
